@@ -42,6 +42,7 @@
             height: 100vh;
         }
 
+        /* Sidebar */
         nav {
             background: rgba(255, 255, 255, 0.05);
             border-right: 1px solid rgba(255, 255, 255, 0.1);
@@ -121,6 +122,7 @@
             100% { transform: translate3d(-100%, 0, 0); }
         }
 
+        /* Main Content */
         main {
             padding: 40px;
             position: relative;
@@ -236,8 +238,8 @@
             <div class="side-section">
                 <h4>Mainz-Kastel Intel</h4>
                 <div class="side-item">Condition <span class="side-value" id="weather-cond">Loading...</span></div>
-                <div class="side-item">Temp <span class="side-value" id="weather-temp">--°C</span></div>
-                <div class="side-item">Wind <span class="side-value" id="weather-wind">-- km/h</span></div>
+                <div class="side-item">Temp <span class="side-value" id="weather-temp">--°F</span></div>
+                <div class="side-item">Wind <span class="side-value" id="weather-wind">-- mph</span></div>
             </div>
 
             <div class="side-section">
@@ -261,7 +263,7 @@
         </nav>
         <main>
             <header>
-                <h1>Fleet Commander Dashboard</h1>
+                <h1>Flock Commander Dashboard</h1>
                 <div id="clock" style="font-family: monospace; font-size: 1.2rem;"></div>
             </header>
 
@@ -287,20 +289,12 @@
             <div style="margin-top: 40px;" class="card">
                 <h3>Tactical Pasture Heat Map</h3>
                 <div id="tactical-map" style="height: 350px; background: rgba(0,0,0,0.3); border: 1px solid var(--pasture-green); border-radius: 10px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                    <!-- Radar Ping Effect -->
                     <div class="radar-ping"></div>
-                    
-                    <!-- Pasture Grid -->
                     <div style="position: absolute; width: 100%; height: 100%; background-image: radial-gradient(var(--deep-forest) 1px, transparent 1px); background-size: 30px 30px; opacity: 0.2;"></div>
-                    
-                    <!-- Heat Zones -->
                     <div class="heat-zone" style="top: 20%; left: 30%; width: 100px; height: 100px; background: radial-gradient(circle, rgba(46, 204, 113, 0.4) 0%, transparent 70%);"></div>
                     <div class="heat-zone" style="top: 60%; left: 70%; width: 150px; height: 150px; background: radial-gradient(circle, rgba(46, 204, 113, 0.3) 0%, transparent 70%);"></div>
                     <div class="heat-zone" style="top: 40%; left: 10%; width: 80px; height: 80px; background: radial-gradient(circle, rgba(241, 196, 15, 0.2) 0%, transparent 70%);"></div>
-
-                    <!-- Scan Line -->
                     <div class="scan-line"></div>
-
                     <div style="z-index: 2; font-family: monospace; text-align: center; font-size: 0.8rem; color: var(--pasture-green); text-shadow: 0 0 10px var(--pasture-green);">
                         [ UPLINK SECURE ]<br>
                         REGION: MAINZ-KASTEL ALPHA<br>
@@ -324,6 +318,7 @@
             "Warning: Shearer activity detected in peripheral zones.",
             "Sheep of the month voting now open in the mess hall.",
             "Fleet density doubled. Commanders advised to maintain wool output.",
+            "Sub-pasture 4 report: Clover levels optimal.",
             "Intelligence Report: Wolves in the area have been successfully bamboozled.",
             "Weather Update: Mainz-Kastel skies being monitored for optimal grazing.",
             "Status: 100% Baa-lliant operations confirmed."
@@ -337,14 +332,13 @@
 
         async function updateWeather() {
             try {
-                // Fetching weather for Mainz-Kastel from wttr.in (JSON format)
                 const res = await fetch('https://wttr.in/Mainz-Kastel?format=j1');
                 const data = await res.json();
                 const current = data.current_condition[0];
                 
                 document.getElementById('weather-cond').innerText = current.weatherDesc[0].value;
-                document.getElementById('weather-temp').innerText = current.temp_C + '°C';
-                document.getElementById('weather-wind').innerText = current.windspeedKmph + ' km/h';
+                document.getElementById('weather-temp').innerText = current.temp_F + '°F';
+                document.getElementById('weather-wind').innerText = current.windspeedMiles + ' mph';
             } catch (e) {
                 document.getElementById('weather-cond').innerText = "Static Interf.";
             }
@@ -354,11 +348,10 @@
             const pasture = document.getElementById('pasture');
             const sheep = document.createElement('img');
             sheep.className = 'sheep-gif';
-            // Using the specific Behance high-res run cycle
             sheep.src = 'https://mir-s3-cdn-cf.behance.net/project_modules/hd/e7d81771805451.5ca68e4ac7166.gif';
             
             const startY = 10 + (Math.random() * 80);
-            const duration = 10 + (Math.random() * 15);
+            const duration = 15 + (Math.random() * 25);
             
             sheep.style.top = startY + 'vh';
             sheep.style.animation = `walkAcross ${duration}s linear forwards`;
@@ -374,7 +367,7 @@
             dog.src = 'https://media0.giphy.com/media/v1.Y2lkPTZjMDliOTUyNW9iN3BqN2huenp4aXkyMGs0dmxxN3J4dXp5OGk2cGFsbGo5ejVkdyZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/ccVvlqPxbEkhrpuPuY/giphy.gif';
             
             const startY = 20 + (Math.random() * 60);
-            const duration = 5 + (Math.random() * 10); // Dogs are faster than sheep
+            const duration = 5 + (Math.random() * 10);
             
             dog.style.top = startY + 'vh';
             dog.style.animation = `walkAcross ${duration}s linear forwards`;
@@ -389,9 +382,9 @@
         }
 
         setInterval(spawnSheep, 2000);
-        setInterval(spawnDog, 15000); // Dog appears roughly every 15 seconds
+        setInterval(spawnDog, 15000);
         setInterval(updateClock, 1000);
-        setInterval(updateWeather, 600000); // Update weather every 10 mins
+        setInterval(updateWeather, 600000);
         
         initTicker();
         updateClock();
