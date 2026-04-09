@@ -65,11 +65,10 @@
         .card h3 { margin: 0 0 15px 0; color: var(--pasture-green); font-size: 0.9rem; text-transform: uppercase; }
         .stat { font-size: 2.5rem; font-weight: bold; }
 
-        .sheep-lane { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; /* IN FRONT OF MAP */ }
+        .sheep-lane { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; }
         .sheep-gif { position: absolute; width: 120px; height: auto; pointer-events: auto; cursor: pointer; z-index: 101; }
         @keyframes walkAcross { from { left: -150px; } to { left: 110vw; } }
 
-        /* Tactical Map Style */
         #battlespace {
             height: 400px;
             background: rgba(5, 17, 5, 0.1);
@@ -85,7 +84,7 @@
             width: 100%; height: 100%;
             background: url('Grey_worldmap.png') no-repeat center center;
             background-size: cover;
-            opacity: 0.3;
+            opacity: 0.2;
             z-index: 1;
         }
 
@@ -211,19 +210,14 @@
         function updateDynamicStats() {
             FLOCKS += Math.floor(Math.random() * 3) - 1;
             WOOL += (Math.random() * 0.1);
-            const flEl = document.getElementById('stat-flocks');
-            const wlEl = document.getElementById('stat-wool');
-            const efEl = document.getElementById('stat-eff');
-            const clEl = document.getElementById('clover-val');
-            if(flEl) flEl.innerText = FLOCKS.toLocaleString();
-            if(wlEl) wlEl.innerText = WOOL.toFixed(1) + "t";
-            if(efEl) efEl.innerText = (99 + Math.random()).toFixed(1) + "%";
-            if(clEl) clEl.innerText = (90 + Math.random() * 10).toFixed(1) + "%";
+            if(document.getElementById('stat-flocks')) document.getElementById('stat-flocks').innerText = FLOCKS.toLocaleString();
+            if(document.getElementById('stat-wool')) document.getElementById('stat-wool').innerText = WOOL.toFixed(1) + "t";
+            if(document.getElementById('stat-eff')) document.getElementById('stat-eff').innerText = (99 + Math.random()).toFixed(1) + "%";
+            if(document.getElementById('clover-val')) document.getElementById('clover-val').innerText = (90 + Math.random() * 10).toFixed(1) + "%";
         }
 
         async function updateWeather() {
             try {
-                // Secondary Source logic (more robust)
                 const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=50.01&longitude=8.28&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph');
                 const data = await res.json();
                 const current = data.current_weather;
@@ -238,7 +232,7 @@
             const randomIndex = Math.floor(Math.random() * soundCount) + 1;
             const audio = new Audio(`sounds/sheep (${randomIndex}).mp3`);
             audio.volume = 0.2;
-            audio.play().catch(e => console.log("Audio play blocked."));
+            audio.play().catch(e => console.log("Audio blocked."));
         }
 
         function spawnSheep() {
@@ -251,10 +245,7 @@
             const duration = (CURRENT_MODE === "Virus") ? 5 : 15 + (Math.random() * 25);
             sheep.style.top = startY + 'vh';
             sheep.style.animation = `walkAcross ${duration}s linear forwards`;
-            
-            // CLICK HANDLER
             sheep.onclick = () => playRandomSheepSound();
-            
             pasture.appendChild(sheep);
             setTimeout(() => sheep.remove(), duration * 1000);
         }
@@ -264,7 +255,7 @@
             const dog = document.createElement('img');
             dog.className = 'sheep-gif';
             dog.src = CURRENT_MODE === "Minecraft" ? ASSETS.CREEPER : ASSETS.DOG;
-            dog.style.width = CURRENT_MODE === "Minecraft" ? '180px' : '160px'; // SIGNIFICANTLY LARGER
+            dog.style.width = CURRENT_MODE === "Minecraft" ? '180px' : '160px';
             const startY = 20 + (Math.random() * 60);
             const duration = 5 + (Math.random() * 10);
             dog.style.top = startY + 'vh';
@@ -301,18 +292,22 @@
         }
 
         function forceToggle() {
-            if (CURRENT_MODE === "Normal") setMode("Minecraft");
-            else if (CURRENT_MODE === "Minecraft") setMode("Virus");
+            if (CURRENT_MODE === "Normal") setMode(NEXT_ALT);
             else setMode("Normal");
         }
 
-        function runCycle() {
-            setMode("Normal");
-            setTimeout(() => {
-                setMode(NEXT_ALT);
-                NEXT_ALT = (NEXT_ALT === "Minecraft") ? "Virus" : "Minecraft";
-                setTimeout(runCycle, 20000);
-            }, 60000);
+        // TACTICAL HEARTBEAT
+        function startTacticalCycle() {
+            setInterval(() => {
+                if (CURRENT_MODE === "Normal") {
+                    setMode(NEXT_ALT);
+                    const lastMode = NEXT_ALT;
+                    NEXT_ALT = (NEXT_ALT === "Minecraft") ? "Virus" : "Minecraft";
+                    setTimeout(() => {
+                        if (CURRENT_MODE === lastMode) setMode("Normal");
+                    }, 20000);
+                }
+            }, 80000); // 60s Normal + 20s Alternate
         }
 
         function spawnThreat() {
@@ -320,15 +315,16 @@
             const svg = document.getElementById('vector-layer');
             const battlespace = document.getElementById('battlespace');
             const rect = battlespace.getBoundingClientRect();
-            const startX = Math.random() * rect.width;
-            const startY = Math.random() * rect.height;
-            const endX = rect.width * 0.5;
-            const endY = rect.height * 0.35;
-            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-            const d = `M ${startX} ${startY} Q ${(startX+endX)/2} ${Math.min(startY, endY)-50} ${endX} ${endY}`;
-            path.setAttribute("d", d); path.setAttribute("class", "threat-vector");
-            svg.appendChild(path);
-            setTimeout(() => { path.remove(); createIntercept(endX, endY); }, 3000);
+            for(let i=0; i < (Math.random() > 0.7 ? 2 : 1); i++) {
+                const startX = Math.random() * rect.width;
+                const startY = Math.random() * rect.height;
+                const endX = rect.width * 0.5; const endY = rect.height * 0.35;
+                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                const d = `M ${startX} ${startY} Q ${(startX+endX)/2} ${Math.min(startY, endY)-50} ${endX} ${endY}`;
+                path.setAttribute("d", d); path.setAttribute("class", "threat-vector");
+                svg.appendChild(path);
+                setTimeout(() => { path.remove(); createIntercept(endX, endY); }, 3000);
+            }
         }
 
         function createIntercept(x, y) {
@@ -350,7 +346,8 @@
         setInterval(() => document.getElementById('clock').innerText = new Date().toLocaleTimeString(), 1000);
         setInterval(updateWeather, 600000);
         
-        initTicker(); updateClock(); updateWeather(); runCycle();
+        initTicker(); updateClock(); updateWeather(); 
+        startTacticalCycle();
     </script>
 </body>
 </html>
