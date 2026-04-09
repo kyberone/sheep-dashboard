@@ -12,6 +12,7 @@
             --night-sky: #1a1a1a;
             --accent-gold: #f1c40f;
             --alert-red: #e74c3c;
+            --virus-red: #ff0000;
         }
 
         body {
@@ -22,13 +23,31 @@
             color: var(--wool-white);
             overflow: hidden;
             height: 100vh;
-            transition: filter 0.5s ease;
+            transition: all 0.5s ease;
         }
 
+        /* MODE: MINECRAFT */
         body.minecraft-mode {
             background: url('minecraft-pasture.png') no-repeat center center fixed !important;
             background-size: cover !important;
             image-rendering: pixelated;
+        }
+
+        /* MODE: VIRUS */
+        body.virus-mode {
+            filter: hue-rotate(300deg) contrast(1.2);
+            background-color: #200;
+        }
+        body.virus-mode::after {
+            content: "SYSTEM COMPROMISED";
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) rotate(-15deg);
+            font-size: 8rem;
+            color: rgba(255, 0, 0, 0.1);
+            font-weight: bold;
+            pointer-events: none;
+            z-index: 1000;
         }
 
         .glitch { animation: glitch-anim 0.2s linear 3; }
@@ -120,7 +139,6 @@
 
         @keyframes walkAcross { from { left: -150px; } to { left: 110vw; } }
 
-        /* Tactical Map Style */
         #battlespace {
             height: 400px;
             background: rgba(5, 17, 5, 0.4) url('Grey_worldmap.png') no-repeat center center;
@@ -207,15 +225,15 @@
             <div class="side-section">
                 <h4>Pasture Status</h4>
                 <div class="side-item">Clover Density <span class="side-value">High</span></div>
-                <div class="side-item">Wolf Alert <span class="side-value" style="color: var(--pasture-green);">Clear</span></div>
+                <div class="side-item">Wolf Alert <span class="side-value" style="color: var(--pasture-green);" id="wolf-stat">Clear</span></div>
                 <div class="side-item">Location <span class="side-value">Germany</span></div>
             </div>
             <div class="side-section">
                 <h4>Logistics</h4>
-                <div class="side-item">Active Dogs <span class="side-value" id="dog-stat">12</span></div>
-                <div class="side-item">Fence Integrity <span class="side-value">99%</span></div>
+                <div class="side-item">Active Units <span class="side-value" id="unit-stat">12 Dogs</span></div>
+                <div class="side-item">Fence Integrity <span class="side-value" id="fence-stat">99%</span></div>
                 <div class="side-item">Mode <span class="side-value" id="mode-stat">Normal</span></div>
-                <button class="btn" onclick="toggleMinecraft()">Manual Over-ride</button>
+                <button class="btn" onclick="toggleMode()">Maneuver Override</button>
             </div>
             <div style="margin-top:auto; padding: 15px; background: rgba(46, 204, 113, 0.1); border-radius: 10px; font-size: 0.8rem;">
                 <strong>Shepherd's Wisdom:</strong><br>
@@ -224,7 +242,7 @@
         </nav>
         <main>
             <header>
-                <h1>Flock Commander Dashboard</h1>
+                <h1 id="header-title">Flock Commander Dashboard</h1>
                 <div id="clock" style="font-family: monospace; font-size: 1.2rem;"></div>
             </header>
 
@@ -251,24 +269,26 @@
     <div class="sheep-lane" id="pasture"></div>
 
     <script>
-        const newsItems = [
-            "Baa-lliant intelligence gathered.", "Global clover supply monitored.", "Ewe are authorized for grazing.",
-            "Wool market prices hit record highs.", "Tactical sweaters deployed.", "Wolf activity neutralized globally.",
-            "Weather Update: Mainz-Kastel stable.", "Status: 100% Mission Ready."
-        ];
-
-        let IS_MINECRAFT = false;
-        const ASSETS = {
-            TACTICAL_SHEEP: 'https://mir-s3-cdn-cf.behance.net/project_modules/hd/e7d81771805451.5ca68e4ac7166.gif',
-            MINECRAFT_SHEEP: 'https://media.tenor.com/YimrjHumSNEAAAAj/minecraft-sheep.gif',
-            TACTICAL_DOG: 'https://media0.giphy.com/media/v1.Y2lkPTZjMDliOTUyNW9iN3BqN2huenp4aXkyMGs0dmxxN3J4dXp5OGk2cGFsbGo5ejVkdyZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/ccVvlqPxbEkhrpuPuY/giphy.gif',
-            MINECRAFT_CREEPER: 'https://art.ngfiles.com/images/3189000/3189919_pcdelloree_creeper.gif?f1683251769'
+        const newsItems = {
+            Normal: ["Baa-lliant intelligence gathered.", "Clover density optimal in sector 7.", "Ewe are authorized for grazing.", "Status: 100% Mission Ready."],
+            Minecraft: ["Steve detected in north pasture.", "Creeper hiss heard in sector B.", "Diamonds found under the fence!", "Mining operations at 99%."],
+            Virus: ["CRITICAL ERROR: WOOL_CORRUPTION", "BREACH DETECTED IN SECTOR 666", "SYSTEM FAILURE: SHEEP.EXE NOT FOUND", "WOLF_VIRUS ACTIVE"]
         };
+
+        const ASSETS = {
+            SHEEP: 'https://mir-s3-cdn-cf.behance.net/project_modules/hd/e7d81771805451.5ca68e4ac7166.gif',
+            MC_SHEEP: 'https://media.tenor.com/YimrjHumSNEAAAAj/minecraft-sheep.gif',
+            WOLF: 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGxsNXBncXpscmpxN3J4dXp5OGk2cGFsbGo5ejVkdyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/ccVvlqPxbEkhrpuPuY/giphy.gif',
+            CREEPER: 'https://art.ngfiles.com/images/3189000/3189919_pcdelloree_creeper.gif?f1683251769',
+            VIRUS_SHEEP: 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYzY0MGNyeXN0YnlidWx0bmExcnZybnRybXlxNXZycTVybXlxNXZyJnB0PWEmY3Q9Zw/oEI9uWUicKgZq/giphy.gif'
+        };
+
+        let CURRENT_MODE = "Normal";
 
         function initTicker() {
             const ticker = document.getElementById('news-ticker');
-            const items = [...newsItems, ...newsItems].map(text => `<div class="ticker-item">${text}</div>`).join('');
-            ticker.innerHTML = items;
+            const list = newsItems[CURRENT_MODE] || newsItems.Normal;
+            ticker.innerHTML = [...list, ...list].map(text => `<div class="ticker-item">${text}</div>`).join('');
         }
 
         async function updateWeather() {
@@ -286,32 +306,54 @@
             const pasture = document.getElementById('pasture');
             const sheep = document.createElement('img');
             sheep.className = 'sheep-gif';
-            sheep.src = IS_MINECRAFT ? ASSETS.MINECRAFT_SHEEP : ASSETS.TACTICAL_SHEEP;
-            sheep.style.width = IS_MINECRAFT ? '100px' : '120px';
+            
+            if (CURRENT_MODE === "Minecraft") {
+                sheep.src = ASSETS.MC_SHEEP;
+                sheep.style.width = '100px';
+            } else if (CURRENT_MODE === "Virus") {
+                sheep.src = 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMXJ4dXp5OGk2cGFsbGo5ejVkdyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/oEI9uWUicKgZq/giphy.gif';
+                sheep.style.width = '150px';
+                sheep.style.filter = 'invert(1) hue-rotate(180deg)';
+            } else {
+                sheep.src = ASSETS.SHEEP;
+                sheep.style.width = '120px';
+            }
+            
             const startY = 10 + (Math.random() * 80);
-            const duration = 15 + (Math.random() * 25);
+            const duration = (CURRENT_MODE === "Virus") ? 5 : 15 + (Math.random() * 25);
             sheep.style.top = startY + 'vh';
             sheep.style.animation = `walkAcross ${duration}s linear forwards`;
             pasture.appendChild(sheep);
             setTimeout(() => sheep.remove(), duration * 1000);
         }
 
-        function spawnDog() {
-            const pasture = document.getElementById('pasture');
-            const dog = document.createElement('img');
-            dog.className = 'sheep-gif';
-            dog.src = IS_MINECRAFT ? ASSETS.MINECRAFT_CREEPER : ASSETS.TACTICAL_DOG;
-            dog.style.width = IS_MINECRAFT ? '100px' : '80px';
-            const startY = 20 + (Math.random() * 60);
-            const duration = 5 + (Math.random() * 10);
-            dog.style.top = startY + 'vh';
-            dog.style.animation = `walkAcross ${duration}s linear forwards`;
-            pasture.appendChild(dog);
-            setTimeout(() => dog.remove(), duration * 1000);
+        function toggleMode() {
+            document.body.classList.add('glitch');
+            document.querySelectorAll('.sheep-gif').forEach(el => el.remove());
+            
+            setTimeout(() => {
+                if (CURRENT_MODE === "Normal") CURRENT_MODE = "Minecraft";
+                else if (CURRENT_MODE === "Minecraft") CURRENT_MODE = "Virus";
+                else CURRENT_MODE = "Normal";
+
+                document.body.classList.remove('minecraft-mode', 'virus-mode');
+                if (CURRENT_MODE === "Minecraft") document.body.classList.add('minecraft-mode');
+                if (CURRENT_MODE === "Virus") document.body.classList.add('virus-mode');
+
+                document.getElementById('mode-stat').innerText = CURRENT_MODE;
+                document.getElementById('header-title').innerText = CURRENT_MODE === "Virus" ? "SYSTEM COMPROMISED" : "Flock Commander Dashboard";
+                document.getElementById('unit-stat').innerText = CURRENT_MODE === "Virus" ? "CORRUPTED" : (CURRENT_MODE === "Minecraft" ? "CREEPERS" : "12 DOGS");
+                document.getElementById('wolf-stat').innerText = CURRENT_MODE === "Virus" ? "CRITICAL" : "Clear";
+                document.getElementById('fence-stat').innerText = CURRENT_MODE === "Virus" ? "0%" : "99%";
+
+                initTicker();
+                for(let i=0; i<5; i++) spawnSheep();
+                setTimeout(() => document.body.classList.remove('glitch'), 500);
+            }, 200);
         }
 
         function spawnThreat() {
-            if(IS_MINECRAFT) return;
+            if(CURRENT_MODE !== "Normal") return;
             const svg = document.getElementById('vector-layer');
             const battlespace = document.getElementById('battlespace');
             const rect = battlespace.getBoundingClientRect();
@@ -321,8 +363,7 @@
             const endY = rect.height / 2;
             const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
             const d = `M ${startX} ${startY} Q ${(startX+endX)/2} ${Math.min(startY, endY)-50} ${endX} ${endY}`;
-            path.setAttribute("d", d);
-            path.setAttribute("class", "threat-vector");
+            path.setAttribute("d", d); path.setAttribute("class", "threat-vector");
             svg.appendChild(path);
             setTimeout(() => { path.remove(); createIntercept(endX, endY); }, 3000);
         }
@@ -336,24 +377,13 @@
             setTimeout(() => pulse.remove(), 1000);
         }
 
-        function toggleMinecraft() {
-            document.body.classList.add('glitch');
-            document.querySelectorAll('.sheep-gif').forEach(el => el.remove());
-            setTimeout(() => {
-                IS_MINECRAFT = !IS_MINECRAFT;
-                document.body.classList.toggle('minecraft-mode', IS_MINECRAFT);
-                document.getElementById('mode-stat').innerText = IS_MINECRAFT ? "Minecraft" : "Normal";
-                for(let i=0; i<5; i++) spawnSheep();
-                setTimeout(() => document.body.classList.remove('glitch'), 500);
-            }, 200);
-        }
-
         setInterval(spawnSheep, 2000);
-        setInterval(spawnDog, 15000);
         setInterval(spawnThreat, 4000);
         setInterval(() => document.getElementById('clock').innerText = new Date().toLocaleTimeString(), 1000);
         setInterval(updateWeather, 600000);
-        setInterval(() => { toggleMinecraft(); setTimeout(toggleMinecraft, 15000); }, 60000);
+        
+        // Auto-cycle modes every 2 minutes
+        setInterval(toggleMode, 120000);
 
         initTicker(); updateClock(); updateWeather();
     </script>
