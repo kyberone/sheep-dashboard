@@ -6,17 +6,17 @@
     <title>Sheep Intelligence Dashboard</title>
     <style>
         :root {
-            --pasture-green: #22c55e;
-            --deep-forest: #14532d;
+            --pasture-green: #2ecc71;
+            --deep-forest: #27ae60;
             --wool-white: #f9f9f9;
-            --night-sky: #0a0a0a;
+            --night-sky: #1a1a1a;
             --accent-gold: #f1c40f;
-            --alert-red: #ef4444;
+            --alert-red: #e74c3c;
         }
 
         body {
             margin: 0; padding: 0;
-            font-family: 'JetBrains Mono', 'Courier New', monospace;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=2000') no-repeat center center fixed;
             background-size: cover;
             color: var(--wool-white);
@@ -31,9 +31,7 @@
             image-rendering: pixelated;
         }
 
-        .glitch {
-            animation: glitch-anim 0.2s linear 3;
-        }
+        .glitch { animation: glitch-anim 0.2s linear 3; }
         @keyframes glitch-anim {
             0% { clip-path: inset(10% 0 30% 0); transform: translate(-5px, -5px); filter: hue-rotate(90deg); }
             50% { clip-path: inset(40% 0 10% 0); transform: translate(5px, 5px); filter: grayscale(1); }
@@ -45,19 +43,8 @@
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.6);
+            background: rgba(0, 0, 0, 0.4);
             z-index: 0;
-        }
-
-        body::after {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0; left: 0; bottom: 0; right: 0;
-            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 118, 0.06));
-            z-index: 1000;
-            background-size: 100% 4px, 3px 100%;
-            pointer-events: none;
         }
 
         .container {
@@ -69,8 +56,8 @@
         }
 
         nav {
-            background: rgba(10, 10, 10, 0.8);
-            border-right: 1px solid var(--pasture-green);
+            background: rgba(255, 255, 255, 0.05);
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
             padding: 25px;
             display: flex;
             flex-direction: column;
@@ -84,20 +71,19 @@
             color: var(--pasture-green);
             display: flex;
             align-items: center; gap: 10px;
-            border-bottom: 1px solid var(--pasture-green);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
             padding-bottom: 15px;
-            text-shadow: 0 0 10px var(--pasture-green);
         }
 
         .side-section { display: flex; flex-direction: column; gap: 10px; }
-        .side-section h4 { margin: 0; font-size: 0.75rem; color: var(--pasture-green); text-transform: uppercase; opacity: 0.7; }
+        .side-section h4 { margin: 0; font-size: 0.75rem; color: #888; text-transform: uppercase; }
         .side-item { display: flex; justify-content: space-between; font-size: 0.9rem; padding: 5px 0; }
-        .side-value { color: var(--pasture-green); font-weight: bold; text-shadow: 0 0 5px var(--pasture-green); }
+        .side-value { color: var(--pasture-green); font-weight: bold; }
 
         .ticker-wrap {
             position: fixed;
             top: 0; width: 100%; overflow: hidden; height: 40px;
-            background-color: rgba(10, 10, 10, 0.9);
+            background-color: rgba(46, 204, 113, 0.2);
             border-bottom: 1px solid var(--pasture-green);
             z-index: 20;
             display: flex; align-items: center;
@@ -116,42 +102,42 @@
             100% { transform: translate3d(-100%, 0, 0); }
         }
 
-        main { padding: 40px; }
+        main { padding: 40px; overflow-y: auto; }
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-top: 20px; }
         .card { 
-            background: rgba(10, 10, 10, 0.8); 
-            border: 1px solid var(--pasture-green); 
+            background: rgba(255, 255, 255, 0.03); 
+            border: 1px solid rgba(255, 255, 255, 0.1); 
             padding: 25px; 
-            border-radius: 5px; 
+            border-radius: 15px; 
             backdrop-filter: blur(10px); 
-            box-shadow: 0 0 15px rgba(34, 197, 94, 0.2);
         }
         .card h3 { margin: 0 0 15px 0; color: var(--pasture-green); font-size: 0.9rem; text-transform: uppercase; }
-        .stat { font-size: 2.5rem; font-weight: bold; color: var(--pasture-green); text-shadow: 0 0 10px var(--pasture-green); }
+        .stat { font-size: 2.5rem; font-weight: bold; }
 
         .sheep-lane { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-        .sheep-gif { position: absolute; width: 120px; height: auto; opacity: 0.6; }
+        .sheep-gif { position: absolute; width: 120px; height: auto; }
 
         @keyframes walkAcross { from { left: -150px; } to { left: 110vw; } }
 
-        /* Battlespace Awareness Map */
+        /* Tactical Map Style */
         #battlespace {
-            height: 500px;
-            background: var(--night-sky);
+            height: 400px;
+            background: #051105 url('https://upload.wikimedia.org/wikipedia/commons/e/e4/Europe_topography_map_en.png') no-repeat center center;
+            background-size: cover;
             border: 1px solid var(--pasture-green);
             position: relative;
             overflow: hidden;
-            background-image: radial-gradient(var(--deep-forest) 1px, transparent 1px);
-            background-size: 40px 40px;
+            border-radius: 10px;
+            filter: grayscale(1) brightness(0.5) sepia(1) hue-rotate(70deg) saturate(3);
         }
 
         .cyber-shield {
             position: absolute;
             top: 50%; left: 50%;
             transform: translate(-50%, -50%);
-            width: 120px; height: 120px;
-            background: radial-gradient(circle, rgba(34, 197, 94, 0.2) 0%, transparent 70%);
+            width: 100px; height: 100px;
+            background: radial-gradient(circle, rgba(46, 204, 113, 0.2) 0%, transparent 70%);
             border: 1px dashed var(--pasture-green);
             border-radius: 50%;
             z-index: 10;
@@ -171,7 +157,6 @@
             stroke-dasharray: 1000;
             stroke-dashoffset: 1000;
             animation: draw-vector 3s linear forwards;
-            filter: drop-shadow(0 0 5px var(--alert-red));
         }
 
         @keyframes draw-vector { to { stroke-dashoffset: 0; } }
@@ -191,32 +176,17 @@
             100% { transform: translate(-50%, -50%) scale(5); opacity: 0; }
         }
 
-        .holographic-inset {
-            position: absolute;
-            background: rgba(10, 10, 10, 0.9);
-            border: 1px solid var(--pasture-green);
-            padding: 10px;
-            font-size: 0.65rem;
-            color: var(--pasture-green);
-            z-index: 20;
-            box-shadow: 0 0 10px rgba(34, 197, 94, 0.3);
-        }
-
-        #incident-feed { top: 10px; left: 10px; width: 200px; height: 120px; overflow: hidden; }
-        #packet-graph { bottom: 10px; right: 10px; width: 180px; height: 80px; }
-
         .btn {
             background: var(--pasture-green);
             color: #000;
             border: none;
             padding: 10px;
-            border-radius: 2px;
+            border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
             text-transform: uppercase;
             font-size: 0.7rem;
             margin-top: 10px;
-            box-shadow: 0 0 10px var(--pasture-green);
         }
     </style>
 </head>
@@ -227,59 +197,49 @@
 
     <div class="container" style="margin-top: 40px;">
         <nav>
-            <div class="logo"><span>⚔️</span> DCO-E OPS</div>
+            <div class="logo"><span>🐑</span> SHEEP-OS</div>
             <div class="side-section">
-                <h4>Tactical Intel</h4>
+                <h4>Mainz-Kastel Intel</h4>
                 <div class="side-item">Condition <span class="side-value" id="weather-cond">Safe</span></div>
-                <div class="side-item">Node Temp <span class="side-value" id="weather-temp">--°F</span></div>
-                <div class="side-item">Uplink <span class="side-value" id="weather-wind">Stable</span></div>
+                <div class="side-item">Temp <span class="side-value" id="weather-temp">--°F</span></div>
+                <div class="side-item">Wind <span class="side-value" id="weather-wind">-- mph</span></div>
             </div>
             <div class="side-section">
-                <h4>Battlespace Status</h4>
-                <div class="side-item">Threat Level <span class="side-value" style="color: var(--pasture-green);">LOW</span></div>
-                <div class="side-item">Shield Status <span class="side-value">ACTIVE</span></div>
-                <div class="side-item">Location <span class="side-value">WIESBADEN</span></div>
+                <h4>Pasture Status</h4>
+                <div class="side-item">Clover Density <span class="side-value">High</span></div>
+                <div class="side-item">Wolf Alert <span class="side-value" style="color: var(--pasture-green);">Clear</span></div>
+                <div class="side-item">Location <span class="side-value">Germany</span></div>
             </div>
             <div class="side-section">
                 <h4>Logistics</h4>
                 <div class="side-item">Active Units <span class="side-value">2,568</span></div>
-                <div class="side-item">Mode <span class="side-value" id="mode-stat">DEFENSIVE</span></div>
+                <div class="side-item">Mode <span class="side-value" id="mode-stat">Tactical</span></div>
                 <button class="btn" onclick="toggleMinecraft()">Cyber Maneuver</button>
             </div>
-            <div style="margin-top:auto; padding: 15px; border: 1px solid var(--pasture-green); font-size: 0.7rem; color: var(--pasture-green);">
-                <strong>SYSTEM MESSAGE:</strong><br>
-                "Defending the pasture, one packet at a time."
+            <div style="margin-top:auto; padding: 15px; background: rgba(46, 204, 113, 0.1); border-radius: 10px; font-size: 0.8rem;">
+                <strong>Shepherd's Wisdom:</strong><br>
+                <span id="wisdom">"A happy sheep produces the finest tactical wool."</span>
             </div>
         </nav>
         <main>
             <header>
-                <h1>DCO-E BATTLESPACE AWARENESS</h1>
-                <div id="clock" style="font-size: 1.2rem; color: var(--pasture-green);"></div>
+                <h1>Flock Commander Dashboard</h1>
+                <div id="clock" style="font-family: monospace; font-size: 1.2rem;"></div>
             </header>
 
             <div class="grid">
-                <div class="card"><h3>Threats Blocked</h3><div class="stat" id="threat-count">42,891</div></div>
-                <div class="card"><h3>Packet Intensity</h3><div class="stat">1.2 Gbps</div></div>
-                <div class="card"><h3>Uptime</h3><div class="stat">99.99%</div></div>
-                <div class="card"><h3>Lead Tech</h3><div class="stat" style="font-size: 1.5rem; color: var(--accent-gold);">Kyber One</div></div>
+                <div class="card"><h3>Active Flocks</h3><div class="stat">2,568</div></div>
+                <div class="card"><h3>Wool Reserves</h3><div class="stat">85.6t</div></div>
+                <div class="card"><h3>Efficiency</h3><div class="stat">99.9%</div></div>
+                <div class="card"><h3>Top Commander</h3><div class="stat" style="font-size: 1.5rem; color: var(--accent-gold);">Kyber One</div></div>
             </div>
 
             <div style="margin-top: 40px;" class="card">
-                <h3>SITUATIONAL AWARENESS MAP: SECTOR GERMANY</h3>
+                <h3>Tactical Pasture Map: Sector Germany</h3>
                 <div id="battlespace">
-                    <div class="holographic-inset" id="incident-feed">
-                        <div style="border-bottom: 1px solid var(--pasture-green); margin-bottom: 5px; font-weight: bold;">INCIDENT_LOG</div>
-                        <div id="log-content"></div>
-                    </div>
-                    
-                    <div class="holographic-inset" id="packet-graph">
-                        <canvas id="intensity-canvas"></canvas>
-                    </div>
-
                     <div class="cyber-shield"></div>
                     <svg id="vector-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></svg>
-
-                    <div style="position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); font-family: monospace; color: var(--pasture-green); font-size: 0.8rem; background: rgba(10,10,10,0.8); padding: 5px 20px; border: 1px solid var(--pasture-green); z-index: 5;">
+                    <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); font-family: monospace; color: var(--pasture-green); font-size: 0.7rem; background: rgba(0,0,0,0.6); padding: 5px 15px; border-radius: 5px; border: 1px solid var(--pasture-green);">
                         CENTER: WIESBADEN / MAINZ-KASTEL
                     </div>
                 </div>
@@ -291,15 +251,12 @@
 
     <script>
         const newsItems = [
-            "Baa-lliant intelligence gathered.", "Threat Neutralized: Fancy Sheep detected.", "Unauthorized Access Blocked: Lazarus Goat.",
-            "Cyber Shield Integrity at 100%.", "Tactical sweaters deployed.", "Warning: External vulnerability scan detected.",
-            "Node status: Operational.", "Region: Germany Alpha secure.", "Sub-pasture 4 report: Clover levels optimal.",
-            "System patched: Wolf-rootkit removed.", "Weather Update: Mainz-Kastel skies stable.", "Status: 100% Mission Ready."
+            "Baa-lliant intelligence gathered.", "Clover density optimal in sector 7.", "Ewe are authorized for grazing.",
+            "Wool market prices hit record highs.", "Tactical sweaters deployed.", "Wolf activity successfully bamboozled.",
+            "Weather Update: Mainz-Kastel stable.", "Status: 100% Mission Ready."
         ];
 
         let IS_MINECRAFT = false;
-        let THREATS = 42891;
-
         const ASSETS = {
             TACTICAL_SHEEP: 'https://mir-s3-cdn-cf.behance.net/project_modules/hd/e7d81771805451.5ca68e4ac7166.gif',
             MINECRAFT_SHEEP: 'https://media.tenor.com/YimrjHumSNEAAAAj/minecraft-sheep.gif',
@@ -327,10 +284,9 @@
         function spawnSheep() {
             const pasture = document.getElementById('pasture');
             const sheep = document.createElement('img');
-            sheep.className = 'sheep-gif entity-sheep';
+            sheep.className = 'sheep-gif';
             sheep.src = IS_MINECRAFT ? ASSETS.MINECRAFT_SHEEP : ASSETS.TACTICAL_SHEEP;
             sheep.style.width = IS_MINECRAFT ? '100px' : '120px';
-            
             const startY = 10 + (Math.random() * 80);
             const duration = 15 + (Math.random() * 25);
             sheep.style.top = startY + 'vh';
@@ -342,33 +298,15 @@
         function spawnDog() {
             const pasture = document.getElementById('pasture');
             const dog = document.createElement('img');
-            dog.className = 'sheep-gif entity-dog';
+            dog.className = 'sheep-gif';
             dog.src = IS_MINECRAFT ? ASSETS.MINECRAFT_CREEPER : ASSETS.TACTICAL_DOG;
             dog.style.width = IS_MINECRAFT ? '100px' : '80px';
-            
             const startY = 20 + (Math.random() * 60);
             const duration = 5 + (Math.random() * 10);
             dog.style.top = startY + 'vh';
             dog.style.animation = `walkAcross ${duration}s linear forwards`;
             pasture.appendChild(dog);
             setTimeout(() => dog.remove(), duration * 1000);
-        }
-
-        function toggleMinecraft() {
-            document.body.classList.add('glitch');
-            // Clear current entities during swap
-            document.querySelectorAll('.sheep-gif').forEach(el => el.remove());
-            
-            setTimeout(() => {
-                IS_MINECRAFT = !IS_MINECRAFT;
-                document.body.classList.toggle('minecraft-mode', IS_MINECRAFT);
-                document.getElementById('mode-stat').innerText = IS_MINECRAFT ? "MANEUVER" : "DEFENSIVE";
-                
-                // Spawn immediate replacement fleet
-                for(let i=0; i<5; i++) spawnSheep();
-                
-                setTimeout(() => document.body.classList.remove('glitch'), 500);
-            }, 200);
         }
 
         function spawnThreat() {
@@ -394,52 +332,29 @@
             pulse.className = 'intercept-pulse';
             pulse.style.left = x + 'px'; pulse.style.top = y + 'px';
             battlespace.appendChild(pulse);
-            const label = document.createElement('div');
-            label.style.position = 'absolute'; label.style.left = x + 'px'; label.style.top = (y - 30) + 'px';
-            label.style.color = 'var(--pasture-green)'; label.style.fontSize = '0.5rem'; label.style.transform = 'translateX(-50%)';
-            label.innerText = "THREAT NEUTRALIZED";
-            battlespace.appendChild(label);
-            THREATS++;
-            document.getElementById('threat-count').innerText = THREATS.toLocaleString();
-            setTimeout(() => { pulse.remove(); label.remove(); }, 1000);
+            setTimeout(() => pulse.remove(), 1000);
         }
 
-        function updateLog() {
-            const logs = ["VULN SCAN COMPLETE", "UNAUTHORIZED ACCESS BLOCKED", "ENCRYPTION HANDSHAKE", "PACKET FILTER ACTIVE", "FIREWALL HEARTBEAT", "INTRUSION ATTEMPT LOGGED"];
-            const content = document.getElementById('log-content');
-            const now = new Date();
-            const dtg = now.toISOString().replace(/[-:T]/g, '').slice(2, 8) + 'Z ' + now.toLocaleString('en-US', {month: 'short'}).toUpperCase() + ' ' + now.getFullYear().toString().slice(-2);
-            const entry = document.createElement('div');
-            entry.style.marginBottom = '2px';
-            entry.innerText = `[${dtg}] ${logs[Math.floor(Math.random()*logs.length)]}`;
-            content.prepend(entry);
-            if(content.children.length > 8) content.lastChild.remove();
-        }
-
-        function drawGraph() {
-            const canvas = document.getElementById('intensity-canvas');
-            const ctx = canvas.getContext('2d');
-            let points = Array(20).fill(40);
-            setInterval(() => {
-                points.shift(); points.push(20 + Math.random() * 40);
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.strokeStyle = '#22c55e'; ctx.lineWidth = 2;
-                ctx.beginPath(); ctx.moveTo(0, points[0]);
-                for(let i=1; i<points.length; i++) ctx.lineTo(i * (canvas.width/19), points[i]);
-                ctx.stroke();
+        function toggleMinecraft() {
+            document.body.classList.add('glitch');
+            document.querySelectorAll('.sheep-gif').forEach(el => el.remove());
+            setTimeout(() => {
+                IS_MINECRAFT = !IS_MINECRAFT;
+                document.body.classList.toggle('minecraft-mode', IS_MINECRAFT);
+                document.getElementById('mode-stat').innerText = IS_MINECRAFT ? "MANEUVER" : "DEFENSIVE";
+                for(let i=0; i<5; i++) spawnSheep();
+                setTimeout(() => document.body.classList.remove('glitch'), 500);
             }, 200);
         }
 
         setInterval(spawnSheep, 2000);
         setInterval(spawnDog, 15000);
         setInterval(spawnThreat, 4000);
-        setInterval(updateLog, 3000);
         setInterval(() => document.getElementById('clock').innerText = new Date().toLocaleTimeString(), 1000);
         setInterval(updateWeather, 600000);
-        
         setInterval(() => { toggleMinecraft(); setTimeout(toggleMinecraft, 15000); }, 60000);
 
-        initTicker(); updateWeather(); drawGraph();
+        initTicker(); updateClock(); updateWeather();
     </script>
 </body>
 </html>
