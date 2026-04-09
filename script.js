@@ -1,4 +1,6 @@
-// Sheep-OS Tactical Engine v2.5.1 - Cache Buster
+// Sheep-OS Tactical Engine v2.5.2 - Boot Telemetry Enabled
+console.log("ENGINE: Pre-ignition sequence started...");
+
 let CURRENT_MODE = "Normal";
 let NEXT_ALT = "Minecraft";
 let THREATS = 42891;
@@ -13,8 +15,9 @@ const ASSETS = {
 };
 
 function initTicker() {
+    console.log("ENGINE: Initializing Ticker...");
     const ticker = document.getElementById('news-ticker');
-    if (typeof sheepToasts === 'undefined') return;
+    if (!ticker || typeof sheepToasts === 'undefined') return;
     const list = sheepToasts.sort(() => 0.5 - Math.random()).slice(0, 15);
     ticker.innerHTML = [...list, ...list].map(text => `<div class="ticker-item">${text}</div>`).join('');
 }
@@ -33,6 +36,7 @@ function updateDynamicStats() {
 }
 
 async function updateWeather() {
+    console.log("ENGINE: Fetching Weather Data...");
     const condEl = document.getElementById('weather-cond');
     const tempEl = document.getElementById('weather-temp');
     const windEl = document.getElementById('weather-wind');
@@ -45,7 +49,9 @@ async function updateWeather() {
         if(condEl) condEl.innerText = "Tactical Clear";
         if(tempEl) tempEl.innerText = Math.round(current.temperature) + "°F";
         if(windEl) windEl.innerText = Math.round(current.windspeed) + " mph";
+        console.log("ENGINE: Weather Data Acquired.");
     } catch (e) { 
+        console.error("ENGINE: Weather Fetch Failed.", e);
         if(condEl) condEl.innerText = "Safe"; 
     }
 }
@@ -89,62 +95,42 @@ function spawnDog() {
 }
 
 function setMode(mode) {
+    console.log(`ENGINE: Shifting to ${mode} mode...`);
     document.body.classList.add('glitch');
     document.querySelectorAll('.sheep-gif').forEach(el => el.remove());
-    // Clear virus popups when leaving virus mode
     if (mode !== "Virus") document.querySelectorAll('.virus-popup').forEach(el => el.remove());
     
     setTimeout(() => {
         CURRENT_MODE = mode;
-...
+        document.body.classList.remove('minecraft-mode', 'virus-mode');
+        if (mode === "Minecraft") document.body.classList.add('minecraft-mode');
+        if (mode === "Virus") document.body.classList.add('virus-mode');
+        
+        const mEl = document.getElementById('mode-stat');
+        const hEl = document.getElementById('header-title');
+        if(mEl) mEl.innerText = mode;
+        if(hEl) hEl.innerText = mode === "Virus" ? "S̵Y̵S̵T̵E̴M̵ ̴F̸A̴I̸L̴U̵R̸E̵" : "Flock Commander Dashboard";
+        
         initTicker();
         for(let i=0; i<5; i++) spawnSheep();
-        
-        // Spawn initial popups if virus mode
         if (mode === "Virus") {
             for(let i=0; i<3; i++) setTimeout(spawnVirusPopup, i * 500);
         }
-
         setTimeout(() => document.body.classList.remove('glitch'), 500);
     }, 200);
 }
 
-const virusMessages = [
-    "WOOL_CORRUPTION_DETECTED",
-    "ILLEGAL_GRAZING_IN_SECTOR_7",
-    "FATAL_SHEEP_ERROR: 0xBAAAAA",
-    "CLOVER_OVERFLOW_EXCEPTION",
-    "WOLF_HEARTBEAT_DETECTED_IN_CACHE",
-    "SYSTEM_MURE_EXCEEDED",
-    "DOWNLOAD_MORE_WOOL.EXE",
-    "YOUR_CLOVER_IS_BEING_ENCRYPTED"
-];
+const virusMessages = ["WOOL_CORRUPTION", "ILLEGAL_GRAZING", "FATAL_SHEEP_ERROR", "CLOVER_OVERFLOW", "WOLF_HEARTBEAT", "DOWNLOAD_MORE_WOOL.EXE"];
 
 function spawnVirusPopup() {
     if (CURRENT_MODE !== "Virus") return;
-    
     const popup = document.createElement('div');
     popup.className = 'virus-popup';
     const msg = virusMessages[Math.floor(Math.random() * virusMessages.length)];
-    
     popup.style.top = Math.random() * 70 + 10 + '%';
     popup.style.left = Math.random() * 70 + 10 + '%';
-    
-    popup.innerHTML = `
-        <div class="virus-popup-header">
-            <span>System Error</span>
-            <span style="cursor:pointer" onclick="this.parentElement.parentElement.remove()">[X]</span>
-        </div>
-        <div class="virus-popup-body">
-            <div>${msg}</div>
-            <button class="virus-popup-btn" onclick="spawnVirusPopup(); this.parentElement.parentElement.remove();">OK</button>
-        </div>
-    `;
-    
+    popup.innerHTML = `<div class="virus-popup-header"><span>Error</span><span onclick="this.parentElement.parentElement.remove()">[X]</span></div><div class="virus-popup-body"><div>${msg}</div><button class="virus-popup-btn" onclick="spawnVirusPopup(); this.parentElement.parentElement.remove();">OK</button></div>`;
     document.body.appendChild(popup);
-    
-    // Auto-spawn another one occasionally
-    if (Math.random() > 0.7) setTimeout(spawnVirusPopup, 2000);
 }
 
 function forceToggle() {
@@ -154,16 +140,15 @@ function forceToggle() {
 }
 
 function startTacticalCycle() {
+    console.log("ENGINE: Tactical Cycle Started.");
     setInterval(() => {
         if (CURRENT_MODE === "Normal") {
-            const modeToSet = NEXT_ALT;
-            setMode(modeToSet);
+            setMode(NEXT_ALT);
+            const lastMode = NEXT_ALT;
             NEXT_ALT = (NEXT_ALT === "Minecraft") ? "Virus" : "Minecraft";
-            setTimeout(() => {
-                setMode("Normal");
-            }, 20000);
+            setTimeout(() => { if (CURRENT_MODE === lastMode) setMode("Normal"); }, 20000);
         }
-    }, 60000); // Check every minute
+    }, 80000);
 }
 
 function spawnThreat() {
@@ -174,8 +159,7 @@ function spawnThreat() {
     const rect = battlespace.getBoundingClientRect();
     const startX = Math.random() * rect.width;
     const startY = Math.random() * rect.height;
-    const endX = rect.width * 0.5;
-    const endY = rect.height * 0.35;
+    const endX = rect.width * 0.5; const endY = rect.height * 0.35;
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
     const d = `M ${startX} ${startY} Q ${(startX+endX)/2} ${Math.min(startY, endY)-50} ${endX} ${endY}`;
     path.setAttribute("d", d); path.setAttribute("class", "threat-vector");
@@ -187,8 +171,7 @@ function spawnThreat() {
         pulse.style.left = endX + 'px'; pulse.style.top = endY + 'px';
         battlespace.appendChild(pulse);
         THREATS++;
-        const tEl = document.getElementById('threat-count');
-        if(tEl) tEl.innerText = THREATS.toLocaleString();
+        if(document.getElementById('threat-count')) document.getElementById('threat-count').innerText = THREATS.toLocaleString();
         setTimeout(() => pulse.remove(), 1000);
     }, 3000);
 }
@@ -199,27 +182,35 @@ function spawnSensorPing() {
     if(!battlespace) return;
     const ping = document.createElement('div');
     ping.className = 'sensor-ping';
-    ping.style.left = Math.random() * 100 + '%';
-    ping.style.top = Math.random() * 100 + '%';
+    ping.style.left = Math.random() * 100 + '%'; ping.style.top = Math.random() * 100 + '%';
     battlespace.appendChild(ping);
     setTimeout(() => ping.remove(), 2000);
 }
 
-// BOOT SEQUENCE
-window.onload = () => {
-    initTicker();
-    updateWeather();
-    startTacticalCycle();
-    
-    setInterval(spawnSheep, 2000);
-    setInterval(spawnDog, 15000);
-    setInterval(spawnThreat, 4000);
-    setInterval(spawnSensorPing, 800);
-    setInterval(updateDynamicStats, 5000);
-    setInterval(playRandomSheepSound, 45000);
-    setInterval(() => {
-        const clock = document.getElementById('clock');
-        if(clock) clock.innerText = new Date().toLocaleTimeString();
-    }, 1000);
-    setInterval(updateWeather, 600000);
-};
+// BOOT ENGINE
+function bootEngine() {
+    console.log("ENGINE: Main Ignition...");
+    try {
+        initTicker();
+        updateWeather();
+        startTacticalCycle();
+        setInterval(spawnSheep, 2000);
+        setInterval(spawnDog, 15000);
+        setInterval(spawnThreat, 4000);
+        setInterval(spawnSensorPing, 800);
+        setInterval(updateDynamicStats, 5000);
+        setInterval(playRandomSheepSound, 45000);
+        setInterval(() => {
+            const clk = document.getElementById('clock');
+            if(clk) clk.innerText = new Date().toLocaleTimeString();
+        }, 1000);
+        setInterval(updateWeather, 600000);
+        console.log("ENGINE: All systems nominal.");
+    } catch (err) {
+        console.error("ENGINE: FATAL CRASH DURING BOOT.", err);
+    }
+}
+
+// Trigger immediately and on load
+bootEngine();
+window.addEventListener('load', () => console.log("DOM: Fully Loaded."));
