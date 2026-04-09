@@ -218,13 +218,19 @@
 
         async function updateWeather() {
             try {
+                // Highly reliable Open-Meteo GPS-based fetch for Mainz-Kastel
                 const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=50.01&longitude=8.28&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph');
+                if (!res.ok) throw new Error('Weather signal lost');
                 const data = await res.json();
                 const current = data.current_weather;
+                
                 document.getElementById('weather-cond').innerText = "Tactical Clear";
                 document.getElementById('weather-temp').innerText = Math.round(current.temperature) + "°F";
                 document.getElementById('weather-wind').innerText = Math.round(current.windspeed) + " mph";
-            } catch (e) { document.getElementById('weather-cond').innerText = "Safe"; }
+            } catch (e) { 
+                console.error("Weather Error:", e);
+                document.getElementById('weather-cond').innerText = "Safe"; 
+            }
         }
 
         function playRandomSheepSound() {
