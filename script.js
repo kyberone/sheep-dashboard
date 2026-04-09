@@ -1,4 +1,4 @@
-// Sheep-OS Tactical Engine v2.5.2 - Boot Telemetry Enabled
+// Sheep-OS Tactical Engine v2.5.3
 console.log("ENGINE: Pre-ignition sequence started...");
 
 let CURRENT_MODE = "Normal";
@@ -15,11 +15,17 @@ const ASSETS = {
 };
 
 function initTicker() {
-    console.log("ENGINE: Initializing Ticker...");
     const ticker = document.getElementById('news-ticker');
     if (!ticker || typeof sheepToasts === 'undefined') return;
     const list = sheepToasts.sort(() => 0.5 - Math.random()).slice(0, 15);
     ticker.innerHTML = [...list, ...list].map(text => `<div class="ticker-item">${text}</div>`).join('');
+}
+
+function updateWisdom() {
+    const wisdomEl = document.getElementById('wisdom');
+    if (!wisdomEl || typeof shepherdWisdom === 'undefined') return;
+    const randomWisdom = shepherdWisdom[Math.floor(Math.random() * shepherdWisdom.length)];
+    wisdomEl.innerText = `"${randomWisdom}"`;
 }
 
 function updateDynamicStats() {
@@ -114,10 +120,7 @@ function setMode(mode) {
         initTicker();
         for(let i=0; i<5; i++) spawnSheep();
         if (mode === "Virus") {
-            // Spawn 8 popups spread out by 2 seconds each
-            for(let i=0; i<8; i++) {
-                setTimeout(spawnVirusPopup, i * 2000);
-            }
+            for(let i=0; i<8; i++) setTimeout(spawnVirusPopup, i * 2000);
         }
         setTimeout(() => document.body.classList.remove('glitch'), 500);
     }, 200);
@@ -196,12 +199,14 @@ function bootEngine() {
     try {
         initTicker();
         updateWeather();
+        updateWisdom();
         startTacticalCycle();
         setInterval(spawnSheep, 2000);
         setInterval(spawnDog, 15000);
         setInterval(spawnThreat, 4000);
         setInterval(spawnSensorPing, 800);
         setInterval(updateDynamicStats, 5000);
+        setInterval(updateWisdom, 30000); // Update wisdom every 30s
         setInterval(playRandomSheepSound, 45000);
         setInterval(() => {
             const clk = document.getElementById('clock');
@@ -214,6 +219,5 @@ function bootEngine() {
     }
 }
 
-// Trigger immediately and on load
 bootEngine();
 window.addEventListener('load', () => console.log("DOM: Fully Loaded."));
