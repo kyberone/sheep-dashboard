@@ -25,7 +25,6 @@
             height: 100vh;
         }
 
-        /* Overlay to keep text readable */
         body::before {
             content: '';
             position: fixed;
@@ -35,14 +34,12 @@
             z-index: 0;
         }
 
-        /* Dashboard Layout */
         .container {
             display: grid;
             grid-template-columns: 300px 1fr;
             height: 100vh;
         }
 
-        /* Sidebar */
         nav {
             background: rgba(255, 255, 255, 0.05);
             border-right: 1px solid rgba(255, 255, 255, 0.1);
@@ -87,7 +84,6 @@
 
         .side-value { color: var(--pasture-green); font-weight: bold; }
 
-        /* News Ticker */
         .ticker-wrap {
             position: fixed;
             top: 0;
@@ -122,7 +118,6 @@
             100% { transform: translate3d(-100%, 0, 0); }
         }
 
-        /* Main Content */
         main {
             padding: 40px;
             position: relative;
@@ -160,7 +155,6 @@
 
         .stat { font-size: 2.5rem; font-weight: bold; }
 
-        /* Animated Sheep */
         .sheep-lane {
             position: fixed;
             top: 0; left: 0;
@@ -180,82 +174,56 @@
             to { left: 110vw; }
         }
 
-        /* Map Specific Animations */
-        .radar-ping {
+        /* Drone HUD specific */
+        .drone-noise {
             position: absolute;
-            width: 10px;
-            height: 10px;
-            background: var(--pasture-green);
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: url('https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYzY0MGNyeXN0YnlidWx0bmExcnZybnRybXlxNXZycTVybXlxNXZyJnB0PWEmY3Q9Zw/oEI9uWUicKgZq/giphy.gif');
+            opacity: 0.03;
+            pointer-events: none;
+            mix-blend-mode: screen;
+            z-index: 2;
+        }
+
+        .thermal-sig {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #fff;
             border-radius: 50%;
-            animation: ping 4s ease-out infinite;
-        }
-
-        @keyframes ping {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(50); opacity: 0; }
-        }
-
-        .scan-line {
-            position: absolute;
-            top: 0;
-            width: 100%;
-            height: 2px;
-            background: linear-gradient(to right, transparent, var(--pasture-green), transparent);
-            box-shadow: 0 0 15px var(--pasture-green);
-            animation: scan 5s linear infinite;
+            box-shadow: 0 0 10px #fff, 0 0 20px var(--pasture-green);
+            transition: all 3s linear;
             z-index: 3;
-        }
-
-        @keyframes scan {
-            0% { top: 0%; }
-            100% { top: 100%; }
-        }
-
-        .heat-zone {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(20px);
-            animation: pulse 3s infinite alternate;
-        }
-
-        @keyframes pulse {
-            from { transform: scale(1); opacity: 0.3; }
-            to { transform: scale(1.2); opacity: 0.6; }
         }
     </style>
 </head>
 <body>
     <div class="ticker-wrap">
-        <div class="ticker" id="news-ticker">
-            <!-- Items injected by JS -->
-        </div>
+        <div class="ticker" id="news-ticker"></div>
     </div>
 
     <div class="container" style="margin-top: 40px;">
         <nav>
             <div class="logo"><span>🐑</span> SHEEP-OS</div>
-            
             <div class="side-section">
                 <h4>Mainz-Kastel Intel</h4>
                 <div class="side-item">Condition <span class="side-value" id="weather-cond">Loading...</span></div>
                 <div class="side-item">Temp <span class="side-value" id="weather-temp">--°F</span></div>
                 <div class="side-item">Wind <span class="side-value" id="weather-wind">-- mph</span></div>
             </div>
-
             <div class="side-section">
                 <h4>Pasture Status</h4>
                 <div class="side-item">Clover Density <span class="side-value">High</span></div>
                 <div class="side-item">Wolf Alert <span class="side-value" style="color: var(--pasture-green);">Clear</span></div>
                 <div class="side-item">Location <span class="side-value">Germany</span></div>
             </div>
-
             <div class="side-section">
                 <h4>Logistics</h4>
                 <div class="side-item">Active Dogs <span class="side-value">12</span></div>
                 <div class="side-item">Fence Integrity <span class="side-value">99%</span></div>
                 <div class="side-item">Next Shear <span class="side-value">14 Days</span></div>
             </div>
-
             <div style="margin-top:auto; padding: 15px; background: rgba(46, 204, 113, 0.1); border-radius: 10px; font-size: 0.8rem;">
                 <strong>Shepherd's Wisdom:</strong><br>
                 <span id="wisdom">"A happy sheep produces the finest tactical wool."</span>
@@ -268,38 +236,33 @@
             </header>
 
             <div class="grid">
-                <div class="card">
-                    <h3>Active Flocks</h3>
-                    <div class="stat">2,568</div>
-                </div>
-                <div class="card">
-                    <h3>Wool Reserves</h3>
-                    <div class="stat">85.6t</div>
-                </div>
-                <div class="card">
-                    <h3>Grazing Efficiency</h3>
-                    <div class="stat">99.9%</div>
-                </div>
-                <div class="card">
-                    <h3>Top Commander</h3>
-                    <div class="stat" style="font-size: 1.5rem; color: var(--accent-gold);">Kyber One</div>
-                </div>
+                <div class="card"><h3>Active Flocks</h3><div class="stat">2,568</div></div>
+                <div class="card"><h3>Wool Reserves</h3><div class="stat">85.6t</div></div>
+                <div class="card"><h3>Grazing Efficiency</h3><div class="stat">99.9%</div></div>
+                <div class="card"><h3>Top Commander</h3><div class="stat" style="font-size: 1.5rem; color: var(--accent-gold);">Kyber One</div></div>
             </div>
 
             <div style="margin-top: 40px;" class="card">
-                <h3>Tactical Pasture Heat Map</h3>
-                <div id="tactical-map" style="height: 350px; background: rgba(0,0,0,0.3); border: 1px solid var(--pasture-green); border-radius: 10px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                    <div class="radar-ping"></div>
-                    <div style="position: absolute; width: 100%; height: 100%; background-image: radial-gradient(var(--deep-forest) 1px, transparent 1px); background-size: 30px 30px; opacity: 0.2;"></div>
-                    <div class="heat-zone" style="top: 20%; left: 30%; width: 100px; height: 100px; background: radial-gradient(circle, rgba(46, 204, 113, 0.4) 0%, transparent 70%);"></div>
-                    <div class="heat-zone" style="top: 60%; left: 70%; width: 150px; height: 150px; background: radial-gradient(circle, rgba(46, 204, 113, 0.3) 0%, transparent 70%);"></div>
-                    <div class="heat-zone" style="top: 40%; left: 10%; width: 80px; height: 80px; background: radial-gradient(circle, rgba(241, 196, 15, 0.2) 0%, transparent 70%);"></div>
-                    <div class="scan-line"></div>
-                    <div style="z-index: 2; font-family: monospace; text-align: center; font-size: 0.8rem; color: var(--pasture-green); text-shadow: 0 0 10px var(--pasture-green);">
-                        [ UPLINK SECURE ]<br>
-                        REGION: MAINZ-KASTEL ALPHA<br>
-                        CLOVER DENSITY: 94.2%<br>
-                        <span id="active-pings">ACTIVE SHEEP: 2,568</span>
+                <h3>Aerial Reconnaissance: Drone Feed 01</h3>
+                <div id="drone-feed" style="height: 400px; background: #051105; border: 2px solid var(--pasture-green); border-radius: 10px; position: relative; overflow: hidden; box-shadow: inset 0 0 50px rgba(46, 204, 113, 0.3);">
+                    <div style="position: absolute; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, rgba(46, 204, 113, 0.05) 0px, rgba(46, 204, 113, 0.05) 1px, transparent 1px, transparent 2px); background-size: 100% 3px; pointer-events: none; z-index: 4;"></div>
+                    <div class="drone-noise"></div>
+                    <div style="position: absolute; top: 15px; left: 15px; font-family: monospace; color: var(--pasture-green); font-size: 0.7rem; z-index: 5;">
+                        ALT: 150m<br>SPD: 12mph<br>LAT: 50.0124 N<br>LON: 8.2831 E
+                    </div>
+                    <div style="position: absolute; top: 15px; right: 15px; font-family: monospace; color: var(--pasture-green); font-size: 0.7rem; text-align: right; z-index: 5;">
+                        REC ●<br>MAINZ-KASTEL_SECTOR_A<br>BATT: 84%
+                    </div>
+                    <!-- Crosshair -->
+                    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 120px; height: 120px; border: 1px solid rgba(46, 204, 113, 0.3); border-radius: 50%; z-index: 5;">
+                        <div style="position: absolute; top: 50%; left: -15px; width: 30px; height: 1px; background: var(--pasture-green);"></div>
+                        <div style="position: absolute; top: 50%; right: -15px; width: 30px; height: 1px; background: var(--pasture-green);"></div>
+                        <div style="position: absolute; top: -15px; left: 50%; width: 1px; height: 30px; background: var(--pasture-green);"></div>
+                        <div style="position: absolute; bottom: -15px; left: 50%; width: 1px; height: 30px; background: var(--pasture-green);"></div>
+                    </div>
+                    <div id="drone-targets"></div>
+                    <div style="position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%); font-family: monospace; color: var(--pasture-green); font-size: 0.8rem; background: rgba(0,0,0,0.6); padding: 5px 20px; border-radius: 5px; z-index: 5; border: 1px solid var(--pasture-green);">
+                        AUTO-TRACKING: ACTIVE
                     </div>
                 </div>
             </div>
@@ -310,18 +273,10 @@
 
     <script>
         const newsItems = [
-            "Baa-lliant intelligence gathered in the southern sector.",
-            "Alert: High-quality clover detected at coordinates 42.9, -71.2.",
-            "Ewe are authorized for maximum grazing efficiency.",
-            "Wool market prices hit record highs this morning.",
-            "New tactical sweaters deployed to the alpine division.",
-            "Warning: Shearer activity detected in peripheral zones.",
-            "Sheep of the month voting now open in the mess hall.",
-            "Fleet density doubled. Commanders advised to maintain wool output.",
-            "Sub-pasture 4 report: Clover levels optimal.",
-            "Intelligence Report: Wolves in the area have been successfully bamboozled.",
-            "Weather Update: Mainz-Kastel skies being monitored for optimal grazing.",
-            "Status: 100% Baa-lliant operations confirmed."
+            "Baa-lliant intelligence gathered.", "High-quality clover detected.", "Ewe are authorized for maximum grazing.",
+            "Wool market prices hit record highs.", "Tactical sweaters deployed.", "Warning: Shearer activity detected.",
+            "Sheep of the month voting open.", "Fleet density doubled.", "Sub-pasture 4 report: Clover levels optimal.",
+            "Wolves successfully bamboozled.", "Weather Update: Mainz-Kastel skies stable.", "Status: 100% Baa-lliant operations."
         ];
 
         function initTicker() {
@@ -335,13 +290,10 @@
                 const res = await fetch('https://wttr.in/Mainz-Kastel?format=j1');
                 const data = await res.json();
                 const current = data.current_condition[0];
-                
                 document.getElementById('weather-cond').innerText = current.weatherDesc[0].value;
                 document.getElementById('weather-temp').innerText = current.temp_F + '°F';
                 document.getElementById('weather-wind').innerText = current.windspeedMiles + ' mph';
-            } catch (e) {
-                document.getElementById('weather-cond').innerText = "Static Interf.";
-            }
+            } catch (e) { document.getElementById('weather-cond').innerText = "Static Interf."; }
         }
 
         function spawnSheep() {
@@ -349,13 +301,10 @@
             const sheep = document.createElement('img');
             sheep.className = 'sheep-gif';
             sheep.src = 'https://mir-s3-cdn-cf.behance.net/project_modules/hd/e7d81771805451.5ca68e4ac7166.gif';
-            
             const startY = 10 + (Math.random() * 80);
             const duration = 15 + (Math.random() * 25);
-            
             sheep.style.top = startY + 'vh';
             sheep.style.animation = `walkAcross ${duration}s linear forwards`;
-            
             pasture.appendChild(sheep);
             setTimeout(() => sheep.remove(), duration * 1000);
         }
@@ -365,31 +314,40 @@
             const dog = document.createElement('img');
             dog.className = 'sheep-gif';
             dog.src = 'https://media0.giphy.com/media/v1.Y2lkPTZjMDliOTUyNW9iN3BqN2huenp4aXkyMGs0dmxxN3J4dXp5OGk2cGFsbGo5ejVkdyZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/ccVvlqPxbEkhrpuPuY/giphy.gif';
-            
             const startY = 20 + (Math.random() * 60);
             const duration = 5 + (Math.random() * 10);
-            
             dog.style.top = startY + 'vh';
             dog.style.animation = `walkAcross ${duration}s linear forwards`;
-            
             pasture.appendChild(dog);
             setTimeout(() => dog.remove(), duration * 1000);
         }
 
-        function updateClock() {
-            const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString();
+        function spawnThermalSig() {
+            const feed = document.getElementById('drone-targets');
+            if(!feed) return;
+            const sig = document.createElement('div');
+            sig.className = 'thermal-sig';
+            let x = Math.random() * 95;
+            let y = Math.random() * 95;
+            sig.style.left = x + '%'; sig.style.top = y + '%';
+            feed.appendChild(sig);
+            setInterval(() => {
+                x += (Math.random() - 0.5) * 8; y += (Math.random() - 0.5) * 8;
+                sig.style.left = Math.max(0, Math.min(95, x)) + '%'; 
+                sig.style.top = Math.max(0, Math.min(95, y)) + '%';
+            }, 3000);
+            setTimeout(() => sig.remove(), 30000);
         }
+
+        function updateClock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }
 
         setInterval(spawnSheep, 2000);
         setInterval(spawnDog, 15000);
+        setInterval(spawnThermalSig, 3000);
         setInterval(updateClock, 1000);
         setInterval(updateWeather, 600000);
-        
-        initTicker();
-        updateClock();
-        updateWeather();
-        for(let i=0; i<10; i++) setTimeout(spawnSheep, Math.random() * 5000);
+        initTicker(); updateClock(); updateWeather();
+        for(let i=0; i<5; i++) spawnThermalSig();
     </script>
 </body>
 </html>
