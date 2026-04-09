@@ -148,7 +148,8 @@ function spawnVirusPopup() {
 }
 
 function forceToggle() {
-    if (CURRENT_MODE === "Normal") setMode(NEXT_ALT);
+    if (CURRENT_MODE === "Normal") setMode("Minecraft");
+    else if (CURRENT_MODE === "Minecraft") setMode("Virus");
     else setMode("Normal");
 }
 
