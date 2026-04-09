@@ -30,7 +30,6 @@
             height: 100vh;
         }
 
-        /* Sidebar */
         nav {
             background: rgba(255, 255, 255, 0.05);
             border-right: 1px solid rgba(255, 255, 255, 0.1);
@@ -46,11 +45,9 @@
             font-weight: bold;
             color: var(--pasture-green);
             display: flex;
-            align-items: center;
-            gap: 10px;
+            align-items: center; gap: 10px;
         }
 
-        /* Main Content */
         main {
             padding: 40px;
             position: relative;
@@ -61,28 +58,57 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
+        }
+
+        /* News Ticker */
+        .ticker-wrap {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            overflow: hidden;
+            height: 40px;
+            background-color: rgba(46, 204, 113, 0.2);
+            border-bottom: 1px solid var(--pasture-green);
+            z-index: 20;
+            display: flex;
+            align-items: center;
+        }
+
+        .ticker {
+            display: inline-block;
+            white-space: nowrap;
+            padding-right: 100%;
+            animation: ticker 30s linear infinite;
+            font-weight: bold;
+            color: var(--pasture-green);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .ticker-item {
+            display: inline-block;
+            padding: 0 50px;
+        }
+
+        @keyframes ticker {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
         }
 
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 25px;
+            margin-top: 20px;
         }
 
-        /* Cards */
         .card {
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid rgba(255, 255, 255, 0.1);
             padding: 25px;
             border-radius: 15px;
             backdrop-filter: blur(10px);
-            transition: transform 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            border-color: var(--pasture-green);
         }
 
         .card h3 {
@@ -90,75 +116,69 @@
             color: var(--pasture-green);
             font-size: 0.9rem;
             text-transform: uppercase;
-            letter-spacing: 1px;
         }
 
-        .stat {
-            font-size: 2.5rem;
-            font-weight: bold;
-        }
+        .stat { font-size: 2.5rem; font-weight: bold; }
 
-        .sub-stat {
-            color: #888;
-            font-size: 0.8rem;
-            margin-top: 5px;
-        }
-
-        /* Sheep Animation */
+        /* Animated Sheep - IN FRONT */
         .sheep-lane {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-        }
-
-        .sheep {
-            position: absolute;
-            font-size: 2rem;
-            white-space: nowrap;
-            transition: transform 0.1s linear;
-        }
-
-        /* Toasts */
-        #toast-container {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 100; /* Front of everything */
+        }
+
+        .sheep-container {
+            position: absolute;
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            z-index: 100;
+            align-items: center;
         }
 
-        .toast {
-            background: var(--pasture-green);
-            color: var(--night-sky);
-            padding: 15px 25px;
-            border-radius: 10px;
-            font-weight: bold;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            animation: slideIn 0.5s ease forwards;
+        .sheep-body {
+            font-size: 3rem;
+            position: relative;
         }
 
-        @keyframes slideIn {
-            from { transform: translateX(120%); }
-            to { transform: translateX(0); }
+        .sheep-legs {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: -10px;
         }
 
-        @keyframes walk {
-            from { left: -100px; }
+        .leg {
+            width: 4px;
+            height: 12px;
+            background: var(--wool-white);
+            animation: moveLeg 0.2s infinite alternate;
+        }
+
+        .leg:nth-child(2) { animation-delay: 0.1s; }
+
+        @keyframes moveLeg {
+            from { transform: skewX(-15deg); }
+            to { transform: skewX(15deg); }
+        }
+
+        @keyframes walkAcross {
+            from { left: -150px; }
             to { left: 110vw; }
         }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="ticker-wrap">
+        <div class="ticker" id="news-ticker">
+            <!-- Items injected by JS -->
+        </div>
+    </div>
+
+    <div class="container" style="margin-top: 40px;">
         <nav>
             <div class="logo"><span>🐑</span> SHEEP-OS</div>
-            <div style="margin-top:auto; font-size: 0.7rem; color: #555;">Version 2.0.26 - "The Pasture Update"</div>
+            <div style="margin-top:auto; font-size: 0.7rem; color: #555;">Version 2.1.0 - "Leg Day Update"</div>
         </nav>
         <main>
             <header>
@@ -170,95 +190,84 @@
                 <div class="card">
                     <h3>Active Flocks</h3>
                     <div class="stat">1,284</div>
-                    <div class="sub-stat">↑ 12% from last season</div>
                 </div>
                 <div class="card">
-                    <h3>Wool Inventory</h3>
+                    <h3>Wool Reserves</h3>
                     <div class="stat">42.8t</div>
-                    <div class="sub-stat">High-grade merino only</div>
                 </div>
                 <div class="card">
                     <h3>Grazing Efficiency</h3>
                     <div class="stat">98.4%</div>
-                    <div class="sub-stat">System Status: Optimal</div>
                 </div>
                 <div class="card">
-                    <h3>Sheep of the Month</h3>
-                    <div class="stat" style="font-size: 1.5rem; color: var(--accent-gold);">Baa-bara Ann</div>
-                    <div class="sub-stat">14 awards won</div>
+                    <h3>Top Commander</h3>
+                    <div class="stat" style="font-size: 1.5rem; color: var(--accent-gold);">Kyber One</div>
                 </div>
             </div>
 
             <div style="margin-top: 40px;" class="card">
                 <h3>Tactical Pasture Map</h3>
-                <div style="height: 200px; background: rgba(46, 204, 113, 0.1); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #444;">
-                    Satellite Link Establishing...
+                <div style="height: 300px; background: rgba(46, 204, 113, 0.05); border: 1px dashed var(--pasture-green); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #444;">
+                    [ DEEP SPACE LINK SECURE ]
                 </div>
             </div>
         </main>
     </div>
 
     <div class="sheep-lane" id="pasture"></div>
-    <div id="toast-container"></div>
 
     <script>
-        const toasts = [
-            "Baa-lliant intelligence gathered!",
-            "New wool shipment detected in Sector 7.",
-            "Ewe are doing an amazing job, Commander.",
-            "Alert: Grazing levels exceeding expectations.",
-            "Wool you look at those stats!",
-            "Don't be sheepish, deploy the fleet!",
-            "Shear perfection achieved in the north pasture."
+        const newsItems = [
+            "Baa-lliant intelligence gathered in the southern sector.",
+            "Alert: High-quality clover detected at coordinates 42.9, -71.2.",
+            "Ewe are authorized for maximum grazing efficiency.",
+            "Wool market prices hit record highs this morning.",
+            "New tactical sweaters deployed to the alpine division.",
+            "Warning: Shearer activity detected in peripheral zones.",
+            "Sheep of the month voting now open in the mess hall."
         ];
 
-        function createToast() {
-            const container = document.getElementById('toast-container');
-            if(!container) return;
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.innerText = toasts[Math.floor(Math.random() * toasts.length)];
-            container.appendChild(toast);
-            
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transition = 'opacity 0.5s ease';
-                setTimeout(() => toast.remove(), 500);
-            }, 4000);
+        function initTicker() {
+            const ticker = document.getElementById('news-ticker');
+            // Duplicate items for seamless loop
+            const items = [...newsItems, ...newsItems].map(text => `<div class="ticker-item">${text}</div>`).join('');
+            ticker.innerHTML = items;
         }
 
         function spawnSheep() {
             const pasture = document.getElementById('pasture');
-            if(!pasture) return;
-            const sheep = document.createElement('div');
-            sheep.className = 'sheep';
-            sheep.innerText = '🐑';
+            const container = document.createElement('div');
+            container.className = 'sheep-container';
             
-            const startY = Math.random() * 90;
-            const duration = 10 + Math.random() * 20;
+            container.innerHTML = `
+                <div class="sheep-body">🐑</div>
+                <div class="sheep-legs">
+                    <div class="leg"></div>
+                    <div class="leg"></div>
+                </div>
+            `;
             
-            sheep.style.top = startY + 'vh';
-            sheep.style.left = '-100px';
-            sheep.style.animation = `walk ${duration}s linear forwards`;
+            const startY = 10 + (Math.random() * 80);
+            const duration = 8 + (Math.random() * 15);
             
-            pasture.appendChild(sheep);
-            setTimeout(() => sheep.remove(), duration * 1000);
+            container.style.top = startY + 'vh';
+            container.style.animation = `walkAcross ${duration}s linear forwards`;
+            
+            pasture.appendChild(container);
+            setTimeout(() => container.remove(), duration * 1000);
         }
 
         function updateClock() {
             const now = new Date();
-            const clock = document.getElementById('clock');
-            if(clock) clock.innerText = now.toLocaleTimeString();
+            document.getElementById('clock').innerText = now.toLocaleTimeString();
         }
 
-        // Tactical Loop
-        setInterval(createToast, 8000);
-        setInterval(spawnSheep, 3000);
+        setInterval(spawnSheep, 4000);
         setInterval(updateClock, 1000);
-        updateClock();
         
-        // Initial waves
-        for(let i=0; i<5; i++) setTimeout(spawnSheep, Math.random() * 5000);
+        initTicker();
+        updateClock();
+        for(let i=0; i<3; i++) setTimeout(spawnSheep, Math.random() * 3000);
     </script>
 </body>
 </html>
