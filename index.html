@@ -12,6 +12,7 @@
             --night-sky: #1a1a1a;
             --accent-gold: #f1c40f;
             --alert-red: #e74c3c;
+            --virus-red: #ff0000;
         }
 
         body {
@@ -72,7 +73,7 @@
         #battlespace {
             height: 400px;
             background: rgba(5, 17, 5, 0.4) url('Grey_worldmap.png') no-repeat center center;
-            background-size: cover; /* CHANGED TO COVER */
+            background-size: cover;
             border: 1px solid var(--pasture-green);
             position: relative;
             overflow: hidden;
@@ -148,7 +149,6 @@
 
     <div class="sheep-lane" id="pasture"></div>
 
-    <!-- External Toasts Library -->
     <script src="toasts.js"></script>
 
     <script>
@@ -167,8 +167,8 @@
 
         function initTicker() {
             const ticker = document.getElementById('news-ticker');
-            // Randomize from external toasts.js
-            const list = sheepToasts.sort(() => 0.5 - Math.random()).slice(0, 10);
+            if (typeof sheepToasts === 'undefined') return;
+            const list = sheepToasts.sort(() => 0.5 - Math.random()).slice(0, 15);
             ticker.innerHTML = [...list, ...list].map(text => `<div class="ticker-item">${text}</div>`).join('');
         }
 
@@ -183,8 +183,8 @@
 
         async function updateWeather() {
             try {
-                const res = await fetch('https://wttr.in/Mainz-Kastel?format=%25C+%25f+%25w');
-                const text = await response.text(); // Fixed logic here
+                const response = await fetch('https://wttr.in/Mainz-Kastel?format=%25C+%25f+%25w');
+                const text = await response.text();
                 const parts = text.split(' ');
                 document.getElementById('weather-cond').innerText = parts[0] || "Safe";
                 document.getElementById('weather-temp').innerText = parts[1] || "--°F";
@@ -281,8 +281,9 @@
         setInterval(spawnThreat, 4000);
         setInterval(updateDynamicStats, 5000);
         setInterval(() => document.getElementById('clock').innerText = new Date().toLocaleTimeString(), 1000);
+        setInterval(updateWeather, 600000);
         
-        initTicker(); updateClock(); runCycle();
+        initTicker(); updateClock(); updateWeather(); runCycle();
     </script>
 </body>
 </html>
