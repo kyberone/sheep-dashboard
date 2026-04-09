@@ -26,12 +26,11 @@
         }
 
         body.minecraft-mode {
-            background: url('https://wallpaperaccess.com/full/411424.jpg') no-repeat center center fixed;
-            background-size: cover;
+            background: url('https://minecraft.net/static/theme/img/background/minecraft-grass.jpg') no-repeat center center fixed !important;
+            background-size: cover !important;
             image-rendering: pixelated;
         }
 
-        /* Glitch Transition Effect */
         .glitch {
             animation: glitch-anim 0.2s linear 3;
         }
@@ -117,7 +116,7 @@
 
         @keyframes walkAcross { from { left: -150px; } to { left: 110vw; } }
 
-        /* Drone HUD specific */
+        /* Drone HUD */
         .drone-noise {
             position: absolute;
             top: 0; left: 0;
@@ -128,8 +127,20 @@
             mix-blend-mode: screen;
             z-index: 2;
         }
-
         .thermal-sig { position: absolute; width: 8px; height: 8px; background: #fff; border-radius: 50%; box-shadow: 0 0 10px #fff, 0 0 20px var(--pasture-green); transition: all 3s linear; z-index: 3; }
+
+        .btn {
+            background: var(--pasture-green);
+            color: #000;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.7rem;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -157,6 +168,7 @@
                 <div class="side-item">Active Dogs <span class="side-value" id="dog-stat">12</span></div>
                 <div class="side-item">Fence Integrity <span class="side-value">99%</span></div>
                 <div class="side-item">Mode <span class="side-value" id="mode-stat">Tactical</span></div>
+                <button class="btn" onclick="toggleMinecraft()">Manual Over-ride</button>
             </div>
             <div style="margin-top:auto; padding: 15px; background: rgba(46, 204, 113, 0.1); border-radius: 10px; font-size: 0.8rem;">
                 <strong>Shepherd's Wisdom:</strong><br>
@@ -233,7 +245,6 @@
             const pasture = document.getElementById('pasture');
             const sheep = document.createElement('img');
             sheep.className = 'sheep-gif';
-            
             if (IS_MINECRAFT) {
                 sheep.src = 'https://media.tenor.com/YimrjHumSNEAAAAj/minecraft-sheep.gif';
                 sheep.style.width = '100px';
@@ -241,7 +252,6 @@
                 sheep.src = 'https://mir-s3-cdn-cf.behance.net/project_modules/hd/e7d81771805451.5ca68e4ac7166.gif';
                 sheep.style.width = '120px';
             }
-            
             const startY = 10 + (Math.random() * 80);
             const duration = 15 + (Math.random() * 25);
             sheep.style.top = startY + 'vh';
@@ -254,7 +264,6 @@
             const pasture = document.getElementById('pasture');
             const dog = document.createElement('img');
             dog.className = 'sheep-gif';
-            
             if (IS_MINECRAFT) {
                 dog.src = 'https://media.tenor.com/nIIsumLsdNoAAAAM/rainbow-minecraft.gif';
                 dog.style.width = '100px';
@@ -262,7 +271,6 @@
                 dog.src = 'https://media0.giphy.com/media/v1.Y2lkPTZjMDliOTUyNW9iN3BqN2huenp4aXkyMGs0dmxxN3J4dXp5OGk2cGFsbGo5ejVkdyZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/ccVvlqPxbEkhrpuPuY/giphy.gif';
                 dog.style.width = '80px';
             }
-            
             const startY = 20 + (Math.random() * 60);
             const duration = 5 + (Math.random() * 10);
             dog.style.top = startY + 'vh';
@@ -293,17 +301,19 @@
             setTimeout(() => sig.remove(), 10000);
         }
 
+        function updateClock() { document.getElementById('clock').innerText = new Date().toLocaleTimeString(); }
+
         setInterval(spawnSheep, 2000);
         setInterval(spawnDog, 15000);
         setInterval(spawnThermalSig, 3000);
         setInterval(updateClock, 1000);
         setInterval(updateWeather, 600000);
         
-        // Mode Switch Timer
+        // Mode Switch Timer: Every 60s for 15s duration
         setInterval(() => {
-            toggleMinecraft(); // Turn on
-            setTimeout(toggleMinecraft, 20000); // Turn off after 20s
-        }, 120000); // Every 2 mins
+            toggleMinecraft(); 
+            setTimeout(toggleMinecraft, 15000);
+        }, 60000);
 
         initTicker(); updateClock(); updateWeather();
     </script>
