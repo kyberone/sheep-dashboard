@@ -345,11 +345,21 @@
         }
 
         setInterval(spawnSheep, 2000);
+        function playRandomSheepSound() {
+            const soundCount = 7;
+            const randomIndex = Math.floor(Math.random() * soundCount) + 1;
+            const audio = new Audio(`sounds/sheep (${randomIndex}).mp3`);
+            audio.volume = 0.2; // Keep it subtle
+            audio.play().catch(e => console.log("Audio play blocked until user interaction."));
+        }
+
+        setInterval(spawnSheep, 2000);
         setInterval(spawnDog, 15000);
-        setInterval(spawnThreat, 3000);
         setInterval(spawnSensorPing, 800);
         setInterval(updateDynamicStats, 5000);
+        setInterval(playRandomSheepSound, 45000); // Play every 45 seconds
         setInterval(() => document.getElementById('clock').innerText = new Date().toLocaleTimeString(), 1000);
+
         setInterval(updateWeather, 600000);
         
         initTicker(); updateClock(); updateWeather(); runCycle();
