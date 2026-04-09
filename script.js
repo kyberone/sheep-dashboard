@@ -1,4 +1,4 @@
-// Sheep-OS Tactical Engine v2.5.3
+// Sheep-OS Tactical Engine v2.5.4
 console.log("ENGINE: Pre-ignition sequence started...");
 
 let CURRENT_MODE = "Normal";
@@ -23,9 +23,14 @@ function initTicker() {
 
 function updateWisdom() {
     const wisdomEl = document.getElementById('wisdom');
-    if (!wisdomEl || typeof shepherdWisdom === 'undefined') return;
+    if (!wisdomEl) return;
+    if (typeof shepherdWisdom === 'undefined') {
+        console.error("ENGINE: wisdom.js not loaded yet.");
+        return;
+    }
     const randomWisdom = shepherdWisdom[Math.floor(Math.random() * shepherdWisdom.length)];
     wisdomEl.innerText = `"${randomWisdom}"`;
+    console.log("ENGINE: Wisdom updated.");
 }
 
 function updateDynamicStats() {
@@ -42,22 +47,17 @@ function updateDynamicStats() {
 }
 
 async function updateWeather() {
-    console.log("ENGINE: Fetching Weather Data...");
     const condEl = document.getElementById('weather-cond');
     const tempEl = document.getElementById('weather-temp');
     const windEl = document.getElementById('weather-wind');
-    
     try {
         const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=50.01&longitude=8.28&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph');
         const data = await res.json();
         const current = data.current_weather;
-        
         if(condEl) condEl.innerText = "Tactical Clear";
         if(tempEl) tempEl.innerText = Math.round(current.temperature) + "°F";
         if(windEl) windEl.innerText = Math.round(current.windspeed) + " mph";
-        console.log("ENGINE: Weather Data Acquired.");
     } catch (e) { 
-        console.error("ENGINE: Weather Fetch Failed.", e);
         if(condEl) condEl.innerText = "Safe"; 
     }
 }
@@ -101,7 +101,7 @@ function spawnDog() {
 }
 
 function setMode(mode) {
-    console.log(`ENGINE: Shifting to ${mode} mode...`);
+    console.log(`ENGINE: Mode Switch -> ${mode}`);
     document.body.classList.add('glitch');
     document.querySelectorAll('.sheep-gif').forEach(el => el.remove());
     if (mode !== "Virus") document.querySelectorAll('.virus-popup').forEach(el => el.remove());
@@ -119,8 +119,12 @@ function setMode(mode) {
         
         initTicker();
         for(let i=0; i<5; i++) spawnSheep();
+        
         if (mode === "Virus") {
-            for(let i=0; i<8; i++) setTimeout(spawnVirusPopup, i * 2000);
+            // STAGGERED SPAWN: 8 boxes, 2s each
+            for(let i=0; i<8; i++) {
+                setTimeout(spawnVirusPopup, i * 2000);
+            }
         }
         setTimeout(() => document.body.classList.remove('glitch'), 500);
     }, 200);
@@ -133,9 +137,16 @@ function spawnVirusPopup() {
     const popup = document.createElement('div');
     popup.className = 'virus-popup';
     const msg = virusMessages[Math.floor(Math.random() * virusMessages.length)];
-    popup.style.top = Math.random() * 70 + 10 + '%';
-    popup.style.left = Math.random() * 70 + 10 + '%';
-    popup.innerHTML = `<div class="virus-popup-header"><span>Error</span><span onclick="this.parentElement.parentElement.remove()">[X]</span></div><div class="virus-popup-body"><div>${msg}</div><button class="virus-popup-btn" onclick="spawnVirusPopup(); this.parentElement.parentElement.remove();">OK</button></div>`;
+    popup.style.top = Math.random() * 60 + 15 + '%';
+    popup.style.left = Math.random() * 60 + 15 + '%';
+    
+    popup.innerHTML = `
+        <div class="virus-popup-header"><span>System Error</span><span style="cursor:pointer" onclick="this.parentElement.parentElement.remove()">[X]</span></div>
+        <div class="virus-popup-body">
+            <div>${msg}</div>
+            <button class="virus-popup-btn" onclick="this.parentElement.parentElement.remove(); spawnVirusPopup();">OK</button>
+        </div>
+    `;
     document.body.appendChild(popup);
 }
 
@@ -146,7 +157,6 @@ function forceToggle() {
 }
 
 function startTacticalCycle() {
-    console.log("ENGINE: Tactical Cycle Started.");
     setInterval(() => {
         if (CURRENT_MODE === "Normal") {
             setMode(NEXT_ALT);
@@ -163,9 +173,9 @@ function spawnThreat() {
     const battlespace = document.getElementById('battlespace');
     if(!battlespace || !svg) return;
     const rect = battlespace.getBoundingClientRect();
+    const endX = rect.width * 0.5; const endY = rect.height * 0.35;
     const startX = Math.random() * rect.width;
     const startY = Math.random() * rect.height;
-    const endX = rect.width * 0.5; const endY = rect.height * 0.35;
     const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
     const d = `M ${startX} ${startY} Q ${(startX+endX)/2} ${Math.min(startY, endY)-50} ${endX} ${endY}`;
     path.setAttribute("d", d); path.setAttribute("class", "threat-vector");
@@ -177,7 +187,8 @@ function spawnThreat() {
         pulse.style.left = endX + 'px'; pulse.style.top = endY + 'px';
         battlespace.appendChild(pulse);
         THREATS++;
-        if(document.getElementById('threat-count')) document.getElementById('threat-count').innerText = THREATS.toLocaleString();
+        const tEl = document.getElementById('threat-count');
+        if(tEl) tEl.innerText = THREATS.toLocaleString();
         setTimeout(() => pulse.remove(), 1000);
     }, 3000);
 }
@@ -193,7 +204,6 @@ function spawnSensorPing() {
     setTimeout(() => ping.remove(), 2000);
 }
 
-// BOOT ENGINE
 function bootEngine() {
     console.log("ENGINE: Main Ignition...");
     try {
@@ -206,7 +216,7 @@ function bootEngine() {
         setInterval(spawnThreat, 4000);
         setInterval(spawnSensorPing, 800);
         setInterval(updateDynamicStats, 5000);
-        setInterval(updateWisdom, 30000); // Update wisdom every 30s
+        setInterval(updateWisdom, 30000);
         setInterval(playRandomSheepSound, 45000);
         setInterval(() => {
             const clk = document.getElementById('clock');
@@ -214,10 +224,8 @@ function bootEngine() {
         }, 1000);
         setInterval(updateWeather, 600000);
         console.log("ENGINE: All systems nominal.");
-    } catch (err) {
-        console.error("ENGINE: FATAL CRASH DURING BOOT.", err);
-    }
+    } catch (err) { console.error("ENGINE: BOOT ERROR.", err); }
 }
 
 bootEngine();
-window.addEventListener('load', () => console.log("DOM: Fully Loaded."));
+window.addEventListener('load', () => console.log("DOM: Ready."));
