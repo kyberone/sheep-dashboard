@@ -18,10 +18,21 @@
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--night-sky);
+            background: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&q=80&w=2000') no-repeat center center fixed;
+            background-size: cover;
             color: var(--wool-white);
             overflow: hidden;
             height: 100vh;
+        }
+
+        /* Overlay to keep text readable */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            z-index: 0;
         }
 
         /* Dashboard Layout */
