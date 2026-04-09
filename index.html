@@ -11,6 +11,7 @@
             --wool-white: #f9f9f9;
             --night-sky: #1a1a1a;
             --accent-gold: #f1c40f;
+            --alert-red: #e74c3c;
         }
 
         body {
@@ -26,42 +27,56 @@
         /* Dashboard Layout */
         .container {
             display: grid;
-            grid-template-columns: 250px 1fr;
+            grid-template-columns: 300px 1fr;
             height: 100vh;
         }
 
+        /* Sidebar - REINFORCED */
         nav {
             background: rgba(255, 255, 255, 0.05);
             border-right: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 20px;
+            padding: 25px;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 30px;
             z-index: 10;
+            backdrop-filter: blur(10px);
         }
 
         .logo {
-            font-size: 1.5rem;
+            font-size: 1.8rem;
             font-weight: bold;
             color: var(--pasture-green);
             display: flex;
             align-items: center; gap: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 15px;
         }
 
-        main {
-            padding: 40px;
-            position: relative;
-            z-index: 5;
+        .side-section {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        header {
+        .side-section h4 {
+            margin: 0;
+            font-size: 0.75rem;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .side-item {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+            font-size: 0.9rem;
+            padding: 5px 0;
         }
 
-        /* News Ticker - SLOWER */
+        .side-value { color: var(--pasture-green); font-weight: bold; }
+
+        /* News Ticker - CUT SPEED IN HALF (360s) */
         .ticker-wrap {
             position: fixed;
             top: 0;
@@ -79,7 +94,7 @@
             display: inline-block;
             white-space: nowrap;
             padding-right: 100%;
-            animation: ticker 180s linear infinite; /* Very slow (180s loop) */
+            animation: ticker 360s linear infinite; /* Half speed of 180s */
             font-weight: bold;
             color: var(--pasture-green);
             text-transform: uppercase;
@@ -94,6 +109,20 @@
         @keyframes ticker {
             0% { transform: translate3d(0, 0, 0); }
             100% { transform: translate3d(-100%, 0, 0); }
+        }
+
+        /* Main Content */
+        main {
+            padding: 40px;
+            position: relative;
+            z-index: 5;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
         }
 
         .grid {
@@ -120,7 +149,7 @@
 
         .stat { font-size: 2.5rem; font-weight: bold; }
 
-        /* Animated Sheep - BACKGROUND & NO LEGS */
+        /* Animated Sheep - BACKGROUND */
         .sheep-lane {
             position: fixed;
             top: 0; left: 0;
@@ -150,7 +179,32 @@
     <div class="container" style="margin-top: 40px;">
         <nav>
             <div class="logo"><span>🐑</span> SHEEP-OS</div>
-            <div style="margin-top:auto; font-size: 0.7rem; color: #555;">Version 2.3.0 - "Broadband Pasture"</div>
+            
+            <div class="side-section">
+                <h4>Weather Intel</h4>
+                <div class="side-item">Condition <span class="side-value">Cloudy/Fluffy</span></div>
+                <div class="side-item">Temp <span class="side-value">22°C / 71°F</span></div>
+                <div class="side-item">Wind <span class="side-value">SSW 4mph</span></div>
+            </div>
+
+            <div class="side-section">
+                <h4>Pasture Status</h4>
+                <div class="side-item">Clover Density <span class="side-value">High</span></div>
+                <div class="side-item">Wolf Alert <span class="side-value" style="color: var(--pasture-green);">Clear</span></div>
+                <div class="side-item">Water Levels <span class="side-value">Optimal</span></div>
+            </div>
+
+            <div class="side-section">
+                <h4>Logistics</h4>
+                <div class="side-item">Active Dogs <span class="side-value">12</span></div>
+                <div class="side-item">Fence Integrity <span class="side-value">99%</span></div>
+                <div class="side-item">Next Shear <span class="side-value">14 Days</span></div>
+            </div>
+
+            <div style="margin-top:auto; padding: 15px; background: rgba(46, 204, 113, 0.1); border-radius: 10px; font-size: 0.8rem;">
+                <strong>Shepherd's Wisdom:</strong><br>
+                "A happy sheep produces the finest tactical wool."
+            </div>
         </nav>
         <main>
             <header>
@@ -179,8 +233,8 @@
 
             <div style="margin-top: 40px;" class="card">
                 <h3>Tactical Pasture Map</h3>
-                <div style="height: 300px; background: rgba(46, 204, 113, 0.05); border: 1px dashed var(--pasture-green); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #444;">
-                    [ MASSIVE FLEET ONLINE ]
+                <div id="map-status" style="height: 300px; background: rgba(46, 204, 113, 0.05); border: 1px dashed var(--pasture-green); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #444; font-family: monospace;">
+                    [ SCANNING FOR CLOVER... ]
                 </div>
             </div>
         </main>
@@ -224,7 +278,7 @@
             sheep.innerText = '🐑';
             
             const startY = 10 + (Math.random() * 80);
-            const duration = 10 + (Math.random() * 20);
+            const duration = 15 + (Math.random() * 25);
             
             sheep.style.top = startY + 'vh';
             sheep.style.animation = `walkAcross ${duration}s linear forwards`;
@@ -235,11 +289,9 @@
 
         function updateClock() {
             const now = new Date();
-            const clock = document.getElementById('clock');
-            if(clock) clock.innerText = now.toLocaleTimeString();
+            document.getElementById('clock').innerText = now.toLocaleTimeString();
         }
 
-        // Maintain double density
         setInterval(spawnSheep, 2000);
         setInterval(updateClock, 1000);
         
