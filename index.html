@@ -187,6 +187,7 @@
     <script src="toasts.js"></script>
 
     <script>
+        // Version 2.4.1 - Fixed Weather & Tactical Heartbeat
         let CURRENT_MODE = "Normal";
         let NEXT_ALT = "Minecraft";
         let THREATS = 42891;
@@ -210,25 +211,27 @@
         function updateDynamicStats() {
             FLOCKS += Math.floor(Math.random() * 3) - 1;
             WOOL += (Math.random() * 0.1);
-            if(document.getElementById('stat-flocks')) document.getElementById('stat-flocks').innerText = FLOCKS.toLocaleString();
-            if(document.getElementById('stat-wool')) document.getElementById('stat-wool').innerText = WOOL.toFixed(1) + "t";
-            if(document.getElementById('stat-eff')) document.getElementById('stat-eff').innerText = (99 + Math.random()).toFixed(1) + "%";
-            if(document.getElementById('clover-val')) document.getElementById('clover-val').innerText = (90 + Math.random() * 10).toFixed(1) + "%";
+            const flEl = document.getElementById('stat-flocks');
+            const wlEl = document.getElementById('stat-wool');
+            const efEl = document.getElementById('stat-eff');
+            const clEl = document.getElementById('clover-val');
+            if(flEl) flEl.innerText = FLOCKS.toLocaleString();
+            if(wlEl) wlEl.innerText = WOOL.toFixed(1) + "t";
+            if(efEl) efEl.innerText = (99 + Math.random()).toFixed(1) + "%";
+            if(clEl) clEl.innerText = (90 + Math.random() * 10).toFixed(1) + "%";
         }
 
         async function updateWeather() {
             try {
-                // Highly reliable Open-Meteo GPS-based fetch for Mainz-Kastel
                 const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=50.01&longitude=8.28&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph');
-                if (!res.ok) throw new Error('Weather signal lost');
+                if (!res.ok) throw new Error('Fetch fail');
                 const data = await res.json();
                 const current = data.current_weather;
-                
                 document.getElementById('weather-cond').innerText = "Tactical Clear";
                 document.getElementById('weather-temp').innerText = Math.round(current.temperature) + "°F";
                 document.getElementById('weather-wind').innerText = Math.round(current.windspeed) + " mph";
             } catch (e) { 
-                console.error("Weather Error:", e);
+                console.error("Weather Signal Error:", e);
                 document.getElementById('weather-cond').innerText = "Safe"; 
             }
         }
@@ -302,44 +305,53 @@
             else setMode("Normal");
         }
 
-        // TACTICAL HEARTBEAT
-        function startTacticalCycle() {
+        // TACTICAL HEARTBEAT: 1m Normal, 20s Alternate
+        function runTacticalEngine() {
+            console.log("Tactical Engine Initialized.");
+            // Logic: Normal for 60s, then switch.
             setInterval(() => {
                 if (CURRENT_MODE === "Normal") {
+                    console.log(`Shifting to ${NEXT_ALT} Mode...`);
                     setMode(NEXT_ALT);
                     const lastMode = NEXT_ALT;
                     NEXT_ALT = (NEXT_ALT === "Minecraft") ? "Virus" : "Minecraft";
+                    
+                    // Return to Normal after 20s
                     setTimeout(() => {
-                        if (CURRENT_MODE === lastMode) setMode("Normal");
+                        console.log("Returning to Normal Operations.");
+                        setMode("Normal");
                     }, 20000);
                 }
-            }, 80000); // 60s Normal + 20s Alternate
+            }, 80000); // 60s Normal + 20s Alt cycle
         }
 
         function spawnThreat() {
             if(CURRENT_MODE === "Minecraft") return;
             const svg = document.getElementById('vector-layer');
             const battlespace = document.getElementById('battlespace');
+            if(!battlespace) return;
             const rect = battlespace.getBoundingClientRect();
-            for(let i=0; i < (Math.random() > 0.7 ? 2 : 1); i++) {
-                const startX = Math.random() * rect.width;
-                const startY = Math.random() * rect.height;
-                const endX = rect.width * 0.5; const endY = rect.height * 0.35;
-                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                const d = `M ${startX} ${startY} Q ${(startX+endX)/2} ${Math.min(startY, endY)-50} ${endX} ${endY}`;
-                path.setAttribute("d", d); path.setAttribute("class", "threat-vector");
-                svg.appendChild(path);
-                setTimeout(() => { path.remove(); createIntercept(endX, endY); }, 3000);
-            }
+            const startX = Math.random() * rect.width;
+            const startY = Math.random() * rect.height;
+            const endX = rect.width * 0.5;
+            const endY = rect.height * 0.35;
+            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            const d = `M ${startX} ${startY} Q ${(startX+endX)/2} ${Math.min(startY, endY)-50} ${endX} ${endY}`;
+            path.setAttribute("d", d); path.setAttribute("class", "threat-vector");
+            svg.appendChild(path);
+            setTimeout(() => { path.remove(); createIntercept(endX, endY); }, 3000);
         }
 
         function createIntercept(x, y) {
             const battlespace = document.getElementById('battlespace');
+            if(!battlespace) return;
             const pulse = document.createElement('div');
             pulse.className = 'intercept-pulse';
             pulse.style.left = x + 'px'; pulse.style.top = y + 'px';
             battlespace.appendChild(pulse);
-            THREATS++; document.getElementById('threat-count').innerText = THREATS.toLocaleString();
+            THREATS++;
+            const tEl = document.getElementById('threat-count');
+            if(tEl) tEl.innerText = THREATS.toLocaleString();
             setTimeout(() => pulse.remove(), 1000);
         }
 
@@ -353,7 +365,7 @@
         setInterval(updateWeather, 600000);
         
         initTicker(); updateClock(); updateWeather(); 
-        startTacticalCycle();
+        runTacticalEngine();
     </script>
 </body>
 </html>
