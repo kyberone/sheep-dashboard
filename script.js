@@ -114,7 +114,10 @@ function setMode(mode) {
         initTicker();
         for(let i=0; i<5; i++) spawnSheep();
         if (mode === "Virus") {
-            for(let i=0; i<3; i++) setTimeout(spawnVirusPopup, i * 500);
+            // Spawn 8 popups spread out by 2 seconds each
+            for(let i=0; i<8; i++) {
+                setTimeout(spawnVirusPopup, i * 2000);
+            }
         }
         setTimeout(() => document.body.classList.remove('glitch'), 500);
     }, 200);
