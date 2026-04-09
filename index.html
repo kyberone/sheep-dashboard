@@ -182,15 +182,36 @@
         }
 
         async function updateWeather() {
+            const condEl = document.getElementById('weather-cond');
+            const tempEl = document.getElementById('weather-temp');
+            const windEl = document.getElementById('weather-wind');
+
             try {
-                const response = await fetch('https://wttr.in/Mainz-Kastel?format=%25C+%25f+%25w');
+                // Try Primary: wttr.in with specific format
+                const response = await fetch('https://wttr.in/Mainz-Kastel?format=%25C|%25f|%25w');
+                if (!response.ok) throw new Error('Primary failed');
                 const text = await response.text();
-                const parts = text.split(' ');
-                document.getElementById('weather-cond').innerText = parts[0] || "Safe";
-                document.getElementById('weather-temp').innerText = parts[1] || "--°F";
-                document.getElementById('weather-wind').innerText = parts[2] || "Stable";
-            } catch (e) { document.getElementById('weather-cond').innerText = "Safe"; }
+                const parts = text.split('|');
+
+                condEl.innerText = parts[0] || "Safe";
+                tempEl.innerText = parts[1] || "--°F";
+                windEl.innerText = parts[2] || "Stable";
+            } catch (e) {
+                console.warn("Primary weather failed, trying secondary...");
+                try {
+                    // Try Secondary: Open-Meteo (No API key needed)
+                    const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=50.01&longitude=8.28&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph');
+                    const data = await res.json();
+                    const current = data.current_weather;
+                    condEl.innerText = "Tactical Clear";
+                    tempEl.innerText = current.temperature + "°F";
+                    windEl.innerText = current.windspeed + " mph";
+                } catch (e2) {
+                    condEl.innerText = "Signal Loss";
+                }
+            }
         }
+
 
         function spawnSheep() {
             const pasture = document.getElementById('pasture');
