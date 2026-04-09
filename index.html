@@ -212,9 +212,10 @@
             </div>
             <div class="side-section">
                 <h4>Logistics</h4>
-                <div class="side-item">Active Units <span class="side-value">2,568</span></div>
+                <div class="side-item">Active Dogs <span class="side-value" id="dog-stat">12</span></div>
+                <div class="side-item">Fence Integrity <span class="side-value">99%</span></div>
                 <div class="side-item">Mode <span class="side-value" id="mode-stat">Tactical</span></div>
-                <button class="btn" onclick="toggleMinecraft()">Cyber Maneuver</button>
+                <button class="btn" onclick="toggleMinecraft()">Manual Over-ride</button>
             </div>
             <div style="margin-top:auto; padding: 15px; background: rgba(46, 204, 113, 0.1); border-radius: 10px; font-size: 0.8rem;">
                 <strong>Shepherd's Wisdom:</strong><br>
@@ -341,7 +342,7 @@
             setTimeout(() => {
                 IS_MINECRAFT = !IS_MINECRAFT;
                 document.body.classList.toggle('minecraft-mode', IS_MINECRAFT);
-                document.getElementById('mode-stat').innerText = IS_MINECRAFT ? "MANEUVER" : "DEFENSIVE";
+                document.getElementById('mode-stat').innerText = IS_MINECRAFT ? "MANEUVER" : "TACTICAL";
                 for(let i=0; i<5; i++) spawnSheep();
                 setTimeout(() => document.body.classList.remove('glitch'), 500);
             }, 200);
