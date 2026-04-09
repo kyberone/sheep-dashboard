@@ -232,13 +232,20 @@
 
         async function updateWeather() {
             try {
-                const res = await fetch('https://wttr.in/Mainz-Kastel?format=j1');
-                const data = await res.json();
-                const current = data.current_condition[0];
-                document.getElementById('weather-cond').innerText = current.weatherDesc[0].value;
-                document.getElementById('weather-temp').innerText = current.temp_F + '°F';
-                document.getElementById('weather-wind').innerText = current.windspeedMiles + ' mph';
-            } catch (e) { document.getElementById('weather-cond').innerText = "Static Interf."; }
+                // Using a more reliable fetch approach for wttr.in
+                const response = await fetch('https://wttr.in/Mainz-Kastel?format=%25C+%25f+%25w');
+                if (!response.ok) throw new Error('Network response was not ok');
+                const text = await response.text();
+                
+                // Format is: Condition Feel Wind
+                const parts = text.split(' ');
+                document.getElementById('weather-cond').innerText = parts[0] || "Clear";
+                document.getElementById('weather-temp').innerText = parts[1] || "--°F";
+                document.getElementById('weather-wind').innerText = parts[2] || "-- mph";
+            } catch (e) { 
+                console.error("Weather Fetch Error:", e);
+                document.getElementById('weather-cond').innerText = "Signal Loss"; 
+            }
         }
 
         function spawnSheep() {
