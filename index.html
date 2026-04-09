@@ -31,7 +31,6 @@
             height: 100vh;
         }
 
-        /* Sidebar - REINFORCED */
         nav {
             background: rgba(255, 255, 255, 0.05);
             border-right: 1px solid rgba(255, 255, 255, 0.1);
@@ -76,7 +75,7 @@
 
         .side-value { color: var(--pasture-green); font-weight: bold; }
 
-        /* News Ticker - CUT SPEED IN HALF (360s) */
+        /* News Ticker */
         .ticker-wrap {
             position: fixed;
             top: 0;
@@ -94,7 +93,7 @@
             display: inline-block;
             white-space: nowrap;
             padding-right: 100%;
-            animation: ticker 360s linear infinite; /* Half speed of 180s */
+            animation: ticker 360s linear infinite;
             font-weight: bold;
             color: var(--pasture-green);
             text-transform: uppercase;
@@ -111,7 +110,6 @@
             100% { transform: translate3d(-100%, 0, 0); }
         }
 
-        /* Main Content */
         main {
             padding: 40px;
             position: relative;
@@ -149,7 +147,7 @@
 
         .stat { font-size: 2.5rem; font-weight: bold; }
 
-        /* Animated Sheep - BACKGROUND */
+        /* Animated Sheep - GIF VERSION */
         .sheep-lane {
             position: fixed;
             top: 0; left: 0;
@@ -158,9 +156,10 @@
             z-index: 1; 
         }
 
-        .sheep-container {
+        .sheep-gif {
             position: absolute;
-            font-size: 3rem;
+            width: 80px; /* Adjust size as needed */
+            height: auto;
         }
 
         @keyframes walkAcross {
@@ -273,12 +272,13 @@
 
         function spawnSheep() {
             const pasture = document.getElementById('pasture');
-            const sheep = document.createElement('div');
-            sheep.className = 'sheep-container';
-            sheep.innerText = '🐑';
+            const sheep = document.createElement('img');
+            sheep.className = 'sheep-gif';
+            // Using a high-quality animated running sheep asset
+            sheep.src = 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExOHIzdmRuN3RrbTMwanVsbmtidHFueGt6NXFyeXBycmtydWZxeXQwayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/3o7TKunbc9vIrpDRPW/giphy.gif';
             
             const startY = 10 + (Math.random() * 80);
-            const duration = 15 + (Math.random() * 25);
+            const duration = 10 + (Math.random() * 15);
             
             sheep.style.top = startY + 'vh';
             sheep.style.animation = `walkAcross ${duration}s linear forwards`;
@@ -289,15 +289,16 @@
 
         function updateClock() {
             const now = new Date();
-            document.getElementById('clock').innerText = now.toLocaleTimeString();
+            const clock = document.getElementById('clock');
+            if(clock) clock.innerText = now.toLocaleTimeString();
         }
 
-        setInterval(spawnSheep, 2000);
+        setInterval(spawnSheep, 2500);
         setInterval(updateClock, 1000);
         
         initTicker();
         updateClock();
-        for(let i=0; i<10; i++) setTimeout(spawnSheep, Math.random() * 5000);
+        for(let i=0; i<8; i++) setTimeout(spawnSheep, Math.random() * 5000);
     </script>
 </body>
 </html>
