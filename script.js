@@ -1,4 +1,4 @@
-// Sheep-OS Tactical Engine v2.5.4
+// Sheep-OS Tactical Engine v2.5.5
 console.log("ENGINE: Pre-ignition sequence started...");
 
 let CURRENT_MODE = "Normal";
@@ -24,13 +24,14 @@ function initTicker() {
 function updateWisdom() {
     const wisdomEl = document.getElementById('wisdom');
     if (!wisdomEl) return;
-    if (typeof shepherdWisdom === 'undefined') {
-        console.error("ENGINE: wisdom.js not loaded yet.");
-        return;
+    // CRITICAL: Check if the global array from wisdom.js exists
+    if (typeof shepherdWisdom !== 'undefined' && shepherdWisdom.length > 0) {
+        const randomWisdom = shepherdWisdom[Math.floor(Math.random() * shepherdWisdom.length)];
+        wisdomEl.innerText = `"${randomWisdom}"`;
+        console.log("ENGINE: Wisdom updated.");
+    } else {
+        console.warn("ENGINE: Waiting for shepherdWisdom data...");
     }
-    const randomWisdom = shepherdWisdom[Math.floor(Math.random() * shepherdWisdom.length)];
-    wisdomEl.innerText = `"${randomWisdom}"`;
-    console.log("ENGINE: Wisdom updated.");
 }
 
 function updateDynamicStats() {
@@ -121,7 +122,7 @@ function setMode(mode) {
         for(let i=0; i<5; i++) spawnSheep();
         
         if (mode === "Virus") {
-            // STAGGERED SPAWN: 8 boxes, 2s each
+            // GUARANTEED STAGGERED SPAWN: 8 boxes, 2s each
             for(let i=0; i<8; i++) {
                 setTimeout(spawnVirusPopup, i * 2000);
             }
@@ -140,11 +141,12 @@ function spawnVirusPopup() {
     popup.style.top = Math.random() * 60 + 15 + '%';
     popup.style.left = Math.random() * 60 + 15 + '%';
     
+    // Removed the recursive call inside the button to prevent logic spam
     popup.innerHTML = `
         <div class="virus-popup-header"><span>System Error</span><span style="cursor:pointer" onclick="this.parentElement.parentElement.remove()">[X]</span></div>
         <div class="virus-popup-body">
             <div>${msg}</div>
-            <button class="virus-popup-btn" onclick="this.parentElement.parentElement.remove(); spawnVirusPopup();">OK</button>
+            <button class="virus-popup-btn" onclick="this.parentElement.parentElement.remove();">OK</button>
         </div>
     `;
     document.body.appendChild(popup);
@@ -187,8 +189,7 @@ function spawnThreat() {
         pulse.style.left = endX + 'px'; pulse.style.top = endY + 'px';
         battlespace.appendChild(pulse);
         THREATS++;
-        const tEl = document.getElementById('threat-count');
-        if(tEl) tEl.innerText = THREATS.toLocaleString();
+        if(document.getElementById('threat-count')) document.getElementById('threat-count').innerText = THREATS.toLocaleString();
         setTimeout(() => pulse.remove(), 1000);
     }, 3000);
 }
@@ -209,7 +210,8 @@ function bootEngine() {
     try {
         initTicker();
         updateWeather();
-        updateWisdom();
+        // Delay initial wisdom to ensure script load
+        setTimeout(updateWisdom, 1000);
         startTacticalCycle();
         setInterval(spawnSheep, 2000);
         setInterval(spawnDog, 15000);
