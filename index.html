@@ -25,138 +25,54 @@
             transition: all 0.3s ease;
         }
 
-        /* MODES */
         body.minecraft-mode {
             background: url('minecraft-pasture.png') no-repeat center center fixed !important;
             background-size: cover !important;
             image-rendering: pixelated;
         }
 
-        body.virus-mode {
-            filter: hue-rotate(300deg) contrast(1.5) brightness(0.8);
-            animation: shake 0.1s infinite;
-        }
+        body.virus-mode { filter: hue-rotate(300deg) contrast(1.5) brightness(0.8); animation: shake 0.1s infinite; }
+        body.virus-mode::after { content: "CRITICAL SYSTEM FAILURE"; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(-10deg); font-size: 6rem; color: rgba(255, 0, 0, 0.2); font-weight: 900; pointer-events: none; z-index: 1000; text-shadow: 0 0 20px red; }
 
-        body.virus-mode::after {
-            content: "CRITICAL SYSTEM FAILURE";
-            position: fixed; top: 50%; left: 50%;
-            transform: translate(-50%, -50%) rotate(-10deg);
-            font-size: 6rem; color: rgba(255, 0, 0, 0.2);
-            font-weight: 900; pointer-events: none; z-index: 1000;
-            text-shadow: 0 0 20px red;
-        }
-
-        .virus-overlay {
-            display: none;
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: repeating-linear-gradient(0deg, rgba(255,0,0,0.1) 0px, rgba(255,0,0,0.1) 1px, transparent 1px, transparent 2px);
-            pointer-events: none; z-index: 999;
-        }
+        .virus-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, rgba(255,0,0,0.1) 0px, rgba(255,0,0,0.1) 1px, transparent 1px, transparent 2px); pointer-events: none; z-index: 999; }
         body.virus-mode .virus-overlay { display: block; }
 
-        @keyframes shake {
-            0% { transform: translate(1px, 1px) rotate(0deg); }
-            20% { transform: translate(-1px, -2px) rotate(-1deg); }
-            40% { transform: translate(-3px, 0px) rotate(1deg); }
-            60% { transform: translate(3px, 2px) rotate(0deg); }
-            80% { transform: translate(1px, -1px) rotate(1deg); }
-            100% { transform: translate(-1px, 2px) rotate(-1deg); }
-        }
-
+        @keyframes shake { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-1px, -2px); } 100% { transform: translate(1px, 1px); } }
         .glitch { animation: glitch-anim 0.2s linear 3; }
-        @keyframes glitch-anim {
-            0% { clip-path: inset(10% 0 30% 0); transform: translate(-5px, -5px); filter: hue-rotate(90deg); }
-            50% { clip-path: inset(40% 0 10% 0); transform: translate(5px, 5px); filter: grayscale(1); }
-            100% { clip-path: inset(0 0 0 0); transform: translate(0, 0); }
-        }
+        @keyframes glitch-anim { 0% { clip-path: inset(10% 0 30% 0); transform: translate(-5px, -5px); } 100% { clip-path: inset(0 0 0 0); transform: translate(0, 0); } }
 
-        body::before {
-            content: '';
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0, 0, 0, 0.4);
-            z-index: 0;
-        }
+        body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.4); z-index: 0; }
 
-        .container {
-            display: grid;
-            grid-template-columns: 300px 1fr;
-            height: 100vh;
-            position: relative;
-            z-index: 5;
-        }
+        .container { display: grid; grid-template-columns: 300px 1fr; height: 100vh; position: relative; z-index: 5; }
 
-        nav {
-            background: rgba(255, 255, 255, 0.05);
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 25px;
-            display: flex;
-            flex-direction: column;
-            gap: 30px;
-            backdrop-filter: blur(10px);
-        }
-
-        .logo {
-            font-size: 1.8rem;
-            font-weight: bold;
-            color: var(--pasture-green);
-            display: flex;
-            align-items: center; gap: 10px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            padding-bottom: 15px;
-        }
-
+        nav { background: rgba(255, 255, 255, 0.05); border-right: 1px solid rgba(255, 255, 255, 0.1); padding: 25px; display: flex; flex-direction: column; gap: 30px; backdrop-filter: blur(10px); }
+        .logo { font-size: 1.8rem; font-weight: bold; color: var(--pasture-green); display: flex; align-items: center; gap: 10px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; }
         .side-section { display: flex; flex-direction: column; gap: 10px; }
         .side-section h4 { margin: 0; font-size: 0.75rem; color: #888; text-transform: uppercase; }
         .side-item { display: flex; justify-content: space-between; font-size: 0.9rem; padding: 5px 0; }
         .side-value { color: var(--pasture-green); font-weight: bold; }
 
-        .ticker-wrap {
-            position: fixed;
-            top: 0; width: 100%; overflow: hidden; height: 40px;
-            background-color: rgba(46, 204, 113, 0.2);
-            border-bottom: 1px solid var(--pasture-green);
-            z-index: 20;
-            display: flex; align-items: center;
-        }
-
-        .ticker {
-            display: inline-block; white-space: nowrap; padding-right: 100%;
-            animation: ticker 360s linear infinite;
-            font-weight: bold; color: var(--pasture-green); text-transform: uppercase;
-        }
-
+        .ticker-wrap { position: fixed; top: 0; width: 100%; overflow: hidden; height: 40px; background-color: rgba(46, 204, 113, 0.2); border-bottom: 1px solid var(--pasture-green); z-index: 20; display: flex; align-items: center; }
+        .ticker { display: inline-block; white-space: nowrap; padding-right: 100%; animation: ticker 360s linear infinite; font-weight: bold; color: var(--pasture-green); text-transform: uppercase; }
         .ticker-item { display: inline-block; padding: 0 100px; }
-
-        @keyframes ticker {
-            0% { transform: translate3d(0, 0, 0); }
-            100% { transform: translate3d(-100%, 0, 0); }
-        }
+        @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-100%, 0, 0); } }
 
         main { padding: 40px; overflow-y: auto; }
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 25px; margin-top: 20px; }
-        .card { 
-            background: rgba(255, 255, 255, 0.03); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            padding: 25px; 
-            border-radius: 15px; 
-            backdrop-filter: blur(10px); 
-        }
+        .card { background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1); padding: 25px; border-radius: 15px; backdrop-filter: blur(10px); }
         .card h3 { margin: 0 0 15px 0; color: var(--pasture-green); font-size: 0.9rem; text-transform: uppercase; }
         .stat { font-size: 2.5rem; font-weight: bold; }
 
         .sheep-lane { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
         .sheep-gif { position: absolute; width: 120px; height: auto; }
-
         @keyframes walkAcross { from { left: -150px; } to { left: 110vw; } }
 
-        /* Tactical Map Style */
+        /* Tactical Map Style - FULL FILL */
         #battlespace {
             height: 400px;
             background: rgba(5, 17, 5, 0.4) url('Grey_worldmap.png') no-repeat center center;
-            background-size: contain;
+            background-size: cover; /* CHANGED TO COVER */
             border: 1px solid var(--pasture-green);
             position: relative;
             overflow: hidden;
@@ -164,62 +80,14 @@
             backdrop-filter: blur(2px);
         }
 
-        .cyber-shield {
-            position: absolute;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80px; height: 80px;
-            background: radial-gradient(circle, rgba(46, 204, 113, 0.2) 0%, transparent 70%);
-            border: 1px dashed var(--pasture-green);
-            border-radius: 50%;
-            z-index: 10;
-            animation: pulse-shield 4s infinite alternate;
-        }
-
-        @keyframes pulse-shield {
-            from { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
-            to { transform: translate(-50%, -50%) scale(1.1); opacity: 0.7; }
-        }
-
-        .threat-vector {
-            position: absolute;
-            stroke: var(--alert-red);
-            stroke-width: 2;
-            fill: none;
-            stroke-dasharray: 1000;
-            stroke-dashoffset: 1000;
-            animation: draw-vector 3s linear forwards;
-        }
-
+        .cyber-shield { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80px; height: 80px; background: radial-gradient(circle, rgba(46, 204, 113, 0.2) 0%, transparent 70%); border: 1px dashed var(--pasture-green); border-radius: 50%; z-index: 10; animation: pulse-shield 4s infinite alternate; }
+        @keyframes pulse-shield { from { transform: translate(-50%, -50%) scale(1); opacity: 0.4; } to { transform: translate(-50%, -50%) scale(1.1); opacity: 0.7; } }
+        .threat-vector { position: absolute; stroke: var(--alert-red); stroke-width: 2; fill: none; stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: draw-vector 3s linear forwards; }
         @keyframes draw-vector { to { stroke-dashoffset: 0; } }
+        .intercept-pulse { position: absolute; width: 20px; height: 20px; background: var(--pasture-green); border-radius: 50%; transform: translate(-50%, -50%); animation: starburst 0.5s ease-out forwards; z-index: 11; }
+        @keyframes starburst { 0% { transform: translate(-50%, -50%) scale(0); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(5); opacity: 0; } }
 
-        .intercept-pulse {
-            position: absolute;
-            width: 20px; height: 20px;
-            background: var(--pasture-green);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            animation: starburst 0.5s ease-out forwards;
-            z-index: 11;
-        }
-
-        @keyframes starburst {
-            0% { transform: translate(-50%, -50%) scale(0); opacity: 1; }
-            100% { transform: translate(-50%, -50%) scale(5); opacity: 0; }
-        }
-
-        .btn {
-            background: var(--pasture-green);
-            color: #000;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-weight: bold;
-            text-transform: uppercase;
-            font-size: 0.7rem;
-            margin-top: 10px;
-        }
+        .btn { background: var(--pasture-green); color: #000; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 0.7rem; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -239,20 +107,19 @@
             </div>
             <div class="side-section">
                 <h4>Pasture Status</h4>
-                <div class="side-item">Clover Density <span class="side-value" id="clover-stat">High</span></div>
+                <div class="side-item">Clover <span class="side-value" id="clover-val">94.2%</span></div>
                 <div class="side-item">Alert <span class="side-value" style="color: var(--pasture-green);" id="wolf-stat">Clear</span></div>
                 <div class="side-item">Location <span class="side-value">Germany</span></div>
             </div>
             <div class="side-section">
                 <h4>Logistics</h4>
-                <div class="side-item">Units <span class="side-value" id="unit-stat">12 Dogs</span></div>
-                <div class="side-item">System <span class="side-value" id="fence-stat">99%</span></div>
+                <div class="side-item">Dogs <span class="side-value" id="dog-stat">12</span></div>
+                <div class="side-item">Fence <span class="side-value" id="fence-stat">99.9%</span></div>
                 <div class="side-item">Mode <span class="side-value" id="mode-stat">Normal</span></div>
                 <button class="btn" onclick="forceToggle()">Maneuver Override</button>
             </div>
             <div style="margin-top:auto; padding: 15px; background: rgba(46, 204, 113, 0.1); border-radius: 10px; font-size: 0.8rem;">
-                <strong>Shepherd's Wisdom:</strong><br>
-                <span id="wisdom">"A happy sheep produces the finest tactical wool."</span>
+                <strong>Wisdom:</strong><br><span id="wisdom">"A happy sheep produces tactical wool."</span>
             </div>
         </nav>
         <main>
@@ -262,20 +129,18 @@
             </header>
 
             <div class="grid">
-                <div class="card"><h3>Active Flocks</h3><div class="stat">2,568</div></div>
-                <div class="card"><h3>Wool Reserves</h3><div class="stat">85.6t</div></div>
-                <div class="card"><h3>Efficiency</h3><div class="stat">99.9%</div></div>
-                <div class="card"><h3>Top Commander</h3><div class="stat" style="font-size: 1.5rem; color: var(--accent-gold);">Kyber One</div></div>
+                <div class="card"><h3>Active Flocks</h3><div class="stat" id="stat-flocks">2,568</div></div>
+                <div class="card"><h3>Wool Reserves</h3><div class="stat" id="stat-wool">85.6t</div></div>
+                <div class="card"><h3>Efficiency</h3><div class="stat" id="stat-eff">99.9%</div></div>
+                <div class="card"><h3>Pings</h3><div class="stat" id="threat-count">42,891</div></div>
             </div>
 
             <div style="margin-top: 40px;" class="card">
-                <h3 id="map-title">Global Tactical Pasture Map</h3>
+                <h3>Global Tactical Pasture Map: Sector Germany</h3>
                 <div id="battlespace">
                     <div class="cyber-shield"></div>
                     <svg id="vector-layer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></svg>
-                    <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); font-family: monospace; color: var(--pasture-green); font-size: 0.7rem; background: rgba(0,0,0,0.6); padding: 5px 15px; border-radius: 5px; border: 1px solid var(--pasture-green);">
-                        WIESBADEN COMMAND CENTER
-                    </div>
+                    <div style="position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); font-family: monospace; color: var(--pasture-green); font-size: 0.7rem; background: rgba(0,0,0,0.6); padding: 5px 15px; border-radius: 5px; border: 1px solid var(--pasture-green);">WIESBADEN COMMAND</div>
                 </div>
             </div>
         </main>
@@ -283,12 +148,15 @@
 
     <div class="sheep-lane" id="pasture"></div>
 
+    <!-- External Toasts Library -->
+    <script src="toasts.js"></script>
+
     <script>
-        const newsItems = {
-            Normal: ["Baa-lliant intelligence gathered.", "Clover density optimal in sector 7.", "Ewe are authorized for grazing.", "Status: 100% Mission Ready."],
-            Minecraft: ["Steve detected in north pasture.", "Creeper hiss heard in sector B.", "Diamonds found under the fence!", "Mining operations at 99%."],
-            Virus: ["Z̶A̸L̶G̶O̴ ̶I̸S̴ ̶C̴O̶M̸I̵N̵G̴", "E̴R̴R̴O̶R̵:̵ ̸S̶H̶E̴E̴P̸_̵O̴V̸E̶R̵L̶O̴A̶D̴", "B̴R̶E̸A̶C̵H̴ ̴I̶N̴ ̶S̴E̴C̵T̴O̶R̴ ̶6̴6̵6̴", "W̸O̵L̶F̶_̸V̵I̶R̴U̸S̴ ̴A̸C̸T̴I̸V̵E̵"]
-        };
+        let CURRENT_MODE = "Normal";
+        let NEXT_ALT = "Minecraft";
+        let THREATS = 42891;
+        let FLOCKS = 2568;
+        let WOOL = 85.6;
 
         const ASSETS = {
             SHEEP: 'https://mir-s3-cdn-cf.behance.net/project_modules/hd/e7d81771805451.5ca68e4ac7166.gif',
@@ -297,27 +165,31 @@
             CREEPER: 'https://art.ngfiles.com/images/3189000/3189919_pcdelloree_creeper.gif?f1683251769'
         };
 
-        let CURRENT_MODE = "Normal";
-        let NEXT_ALT = "Minecraft";
-
         function initTicker() {
             const ticker = document.getElementById('news-ticker');
-            const list = newsItems[CURRENT_MODE] || newsItems.Normal;
+            // Randomize from external toasts.js
+            const list = sheepToasts.sort(() => 0.5 - Math.random()).slice(0, 10);
             ticker.innerHTML = [...list, ...list].map(text => `<div class="ticker-item">${text}</div>`).join('');
+        }
+
+        function updateDynamicStats() {
+            FLOCKS += Math.floor(Math.random() * 3) - 1;
+            WOOL += (Math.random() * 0.1);
+            document.getElementById('stat-flocks').innerText = FLOCKS.toLocaleString();
+            document.getElementById('stat-wool').innerText = WOOL.toFixed(1) + "t";
+            document.getElementById('stat-eff').innerText = (99 + Math.random()).toFixed(1) + "%";
+            document.getElementById('clover-val').innerText = (90 + Math.random() * 10).toFixed(1) + "%";
         }
 
         async function updateWeather() {
             try {
-                // Fixed Weather Fetch: Using wttr.in with text format for reliability
                 const res = await fetch('https://wttr.in/Mainz-Kastel?format=%25C+%25f+%25w');
-                const text = await res.text();
+                const text = await response.text(); // Fixed logic here
                 const parts = text.split(' ');
                 document.getElementById('weather-cond').innerText = parts[0] || "Safe";
                 document.getElementById('weather-temp').innerText = parts[1] || "--°F";
                 document.getElementById('weather-wind').innerText = parts[2] || "Stable";
-            } catch (e) { 
-                document.getElementById('weather-cond').innerText = "Signal Loss"; 
-            }
+            } catch (e) { document.getElementById('weather-cond').innerText = "Safe"; }
         }
 
         function spawnSheep() {
@@ -351,21 +223,13 @@
         function setMode(mode) {
             document.body.classList.add('glitch');
             document.querySelectorAll('.sheep-gif').forEach(el => el.remove());
-            
             setTimeout(() => {
                 CURRENT_MODE = mode;
                 document.body.classList.remove('minecraft-mode', 'virus-mode');
                 if (mode === "Minecraft") document.body.classList.add('minecraft-mode');
                 if (mode === "Virus") document.body.classList.add('virus-mode');
-
                 document.getElementById('mode-stat').innerText = mode;
                 document.getElementById('header-title').innerText = mode === "Virus" ? "S̵Y̵S̵T̵E̴M̵ ̴F̸A̴I̸L̴U̵R̸E̵" : "Flock Commander Dashboard";
-                document.getElementById('logo-text').innerText = mode === "Virus" ? "V̵I̸R̸U̶S̸-̶O̴S̸" : "SHEEP-OS";
-                document.getElementById('logo-icon').innerText = mode === "Virus" ? "💀" : "🐑";
-                document.getElementById('wolf-stat').innerText = mode === "Virus" ? "C̶R̶I̸T̸I̴C̸A̴L̵" : "Clear";
-                document.getElementById('fence-stat').innerText = mode === "Virus" ? "0̸%̸" : "99%";
-                document.getElementById('clover-stat').innerText = mode === "Virus" ? "C̸O̸R̶R̴U̶P̵T̵E̸D̵" : "High";
-
                 initTicker();
                 for(let i=0; i<5; i++) spawnSheep();
                 setTimeout(() => document.body.classList.remove('glitch'), 500);
@@ -378,30 +242,47 @@
             else setMode("Normal");
         }
 
-        // Logic: 1 minute Normal, then 20 seconds alternate (alternating between MC and Virus)
         function runCycle() {
-            // Start at Normal
             setMode("Normal");
-            
             setTimeout(() => {
-                // After 60s, switch to current alternate
                 setMode(NEXT_ALT);
-                
-                // Set the OTHER non-normal mode for next time
                 NEXT_ALT = (NEXT_ALT === "Minecraft") ? "Virus" : "Minecraft";
-                
-                // After 20s of alternate, return to Normal
                 setTimeout(runCycle, 20000);
             }, 60000);
         }
 
+        function spawnThreat() {
+            if(CURRENT_MODE === "Minecraft") return;
+            const svg = document.getElementById('vector-layer');
+            const battlespace = document.getElementById('battlespace');
+            const rect = battlespace.getBoundingClientRect();
+            const startX = Math.random() * rect.width;
+            const startY = Math.random() * rect.height;
+            const endX = rect.width / 2; const endY = rect.height / 2;
+            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            const d = `M ${startX} ${startY} Q ${(startX+endX)/2} ${Math.min(startY, endY)-50} ${endX} ${endY}`;
+            path.setAttribute("d", d); path.setAttribute("class", "threat-vector");
+            svg.appendChild(path);
+            setTimeout(() => { path.remove(); createIntercept(endX, endY); }, 3000);
+        }
+
+        function createIntercept(x, y) {
+            const battlespace = document.getElementById('battlespace');
+            const pulse = document.createElement('div');
+            pulse.className = 'intercept-pulse';
+            pulse.style.left = x + 'px'; pulse.style.top = y + 'px';
+            battlespace.appendChild(pulse);
+            THREATS++; document.getElementById('threat-count').innerText = THREATS.toLocaleString();
+            setTimeout(() => pulse.remove(), 1000);
+        }
+
         setInterval(spawnSheep, 2000);
         setInterval(spawnDog, 15000);
+        setInterval(spawnThreat, 4000);
+        setInterval(updateDynamicStats, 5000);
         setInterval(() => document.getElementById('clock').innerText = new Date().toLocaleTimeString(), 1000);
-        setInterval(updateWeather, 600000);
-
-        initTicker(); updateClock(); updateWeather();
-        runCycle(); // Start the infinite tactical cycle
+        
+        initTicker(); updateClock(); runCycle();
     </script>
 </body>
 </html>
