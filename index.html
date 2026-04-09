@@ -117,8 +117,18 @@
 
         @keyframes walkAcross { from { left: -150px; } to { left: 110vw; } }
 
-        /* Drone HUD */
-        .drone-noise { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: url('https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYzY0MGNyeXN0YnlidWx0bmExcnZybnRybXlxNXZycTVybXlxNXZyJnB0PWEmY3Q9Zw/oEI9uWUicKgZq/giphy.gif'); opacity: 0.03; pointer-events: none; mix-blend-mode: screen; z-index: 2; }
+        /* Drone HUD specific */
+        .drone-noise {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: url('https://upload.wikimedia.org/wikipedia/commons/0/02/Television_static.gif');
+            opacity: 0.05;
+            pointer-events: none;
+            mix-blend-mode: screen;
+            z-index: 2;
+        }
+
         .thermal-sig { position: absolute; width: 8px; height: 8px; background: #fff; border-radius: 50%; box-shadow: 0 0 10px #fff, 0 0 20px var(--pasture-green); transition: all 3s linear; z-index: 3; }
     </style>
 </head>
