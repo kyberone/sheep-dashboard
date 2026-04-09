@@ -91,20 +91,60 @@ function spawnDog() {
 function setMode(mode) {
     document.body.classList.add('glitch');
     document.querySelectorAll('.sheep-gif').forEach(el => el.remove());
+    // Clear virus popups when leaving virus mode
+    if (mode !== "Virus") document.querySelectorAll('.virus-popup').forEach(el => el.remove());
     
     setTimeout(() => {
         CURRENT_MODE = mode;
-        document.body.classList.remove('minecraft-mode', 'virus-mode');
-        if (mode === "Minecraft") document.body.classList.add('minecraft-mode');
-        if (mode === "Virus") document.body.classList.add('virus-mode');
-        
-        document.getElementById('mode-stat').innerText = mode;
-        document.getElementById('header-title').innerText = mode === "Virus" ? "S̵Y̵S̵T̵E̴M̵ ̴F̸A̴I̸L̴U̵R̸E̵" : "Flock Commander Dashboard";
-        
+...
         initTicker();
         for(let i=0; i<5; i++) spawnSheep();
+        
+        // Spawn initial popups if virus mode
+        if (mode === "Virus") {
+            for(let i=0; i<3; i++) setTimeout(spawnVirusPopup, i * 500);
+        }
+
         setTimeout(() => document.body.classList.remove('glitch'), 500);
     }, 200);
+}
+
+const virusMessages = [
+    "WOOL_CORRUPTION_DETECTED",
+    "ILLEGAL_GRAZING_IN_SECTOR_7",
+    "FATAL_SHEEP_ERROR: 0xBAAAAA",
+    "CLOVER_OVERFLOW_EXCEPTION",
+    "WOLF_HEARTBEAT_DETECTED_IN_CACHE",
+    "SYSTEM_MURE_EXCEEDED",
+    "DOWNLOAD_MORE_WOOL.EXE",
+    "YOUR_CLOVER_IS_BEING_ENCRYPTED"
+];
+
+function spawnVirusPopup() {
+    if (CURRENT_MODE !== "Virus") return;
+    
+    const popup = document.createElement('div');
+    popup.className = 'virus-popup';
+    const msg = virusMessages[Math.floor(Math.random() * virusMessages.length)];
+    
+    popup.style.top = Math.random() * 70 + 10 + '%';
+    popup.style.left = Math.random() * 70 + 10 + '%';
+    
+    popup.innerHTML = `
+        <div class="virus-popup-header">
+            <span>System Error</span>
+            <span style="cursor:pointer" onclick="this.parentElement.parentElement.remove()">[X]</span>
+        </div>
+        <div class="virus-popup-body">
+            <div>${msg}</div>
+            <button class="virus-popup-btn" onclick="spawnVirusPopup(); this.parentElement.parentElement.remove();">OK</button>
+        </div>
+    `;
+    
+    document.body.appendChild(popup);
+    
+    // Auto-spawn another one occasionally
+    if (Math.random() > 0.7) setTimeout(spawnVirusPopup, 2000);
 }
 
 function forceToggle() {

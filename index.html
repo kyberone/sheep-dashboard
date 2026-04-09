@@ -38,6 +38,47 @@
         .virus-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: repeating-linear-gradient(0deg, rgba(255,0,0,0.1) 0px, rgba(255,0,0,0.1) 1px, transparent 1px, transparent 2px); pointer-events: none; z-index: 999; }
         body.virus-mode .virus-overlay { display: block; }
 
+        /* VIRUS POPUPS */
+        .virus-popup {
+            position: fixed;
+            width: 300px;
+            background: #c0c0c0;
+            border: 2px solid #fff;
+            border-right-color: #808080;
+            border-bottom-color: #808080;
+            box-shadow: 5px 5px 15px rgba(0,0,0,0.5);
+            z-index: 2000;
+            font-family: 'Tahoma', sans-serif;
+            color: #000;
+            padding: 2px;
+        }
+        .virus-popup-header {
+            background: linear-gradient(90deg, #000080, #1084d0);
+            color: white;
+            padding: 3px 10px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.8rem;
+        }
+        .virus-popup-body {
+            padding: 20px;
+            background: #c0c0c0;
+            text-align: center;
+            font-size: 0.85rem;
+            border: 1px inset #fff;
+        }
+        .virus-popup-btn {
+            margin-top: 10px;
+            background: #c0c0c0;
+            border: 2px solid #fff;
+            border-right-color: #000;
+            border-bottom-color: #000;
+            padding: 5px 20px;
+            cursor: pointer;
+        }
+
         @keyframes shake { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-1px, -2px); } 100% { transform: translate(1px, 1px); } }
         .glitch { animation: glitch-anim 0.2s linear 3; }
         @keyframes glitch-anim { 0% { clip-path: inset(10% 0 30% 0); transform: translate(-5px, -5px); } 100% { clip-path: inset(0 0 0 0); transform: translate(0, 0); } }
