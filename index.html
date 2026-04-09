@@ -66,10 +66,10 @@
         .stat { font-size: 2.5rem; font-weight: bold; }
 
         .sheep-lane { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-        .sheep-gif { position: absolute; width: 120px; height: auto; }
+        .sheep-gif { position: absolute; width: 120px; height: auto; pointer-events: auto; cursor: pointer; }
         @keyframes walkAcross { from { left: -150px; } to { left: 110vw; } }
 
-        /* Tactical Map Style - TRUE TRANSPARENCY */
+        /* Tactical Map Style */
         #battlespace {
             height: 400px;
             background: rgba(5, 17, 5, 0.1);
@@ -85,7 +85,7 @@
             width: 100%; height: 100%;
             background: url('Grey_worldmap.png') no-repeat center center;
             background-size: cover;
-            opacity: 0.3; /* Actual map image transparency */
+            opacity: 0.3;
             z-index: 1;
         }
 
@@ -106,7 +106,7 @@
 
         .cyber-shield { 
             position: absolute; 
-            top: 35%; left: 50%; /* RECALIBRATED TO GERMANY */
+            top: 35%; left: 50%; 
             transform: translate(-50%, -50%); 
             width: 60px; height: 60px; 
             background: radial-gradient(circle, rgba(46, 204, 113, 0.2) 0%, transparent 70%); 
@@ -117,25 +117,10 @@
         }
         @keyframes pulse-shield { from { transform: translate(-50%, -50%) scale(1); opacity: 0.4; } to { transform: translate(-50%, -50%) scale(1.1); opacity: 0.7; } }
         
-        .threat-vector { 
-            position: absolute; 
-            stroke: var(--alert-red); 
-            stroke-width: 2; fill: none; 
-            stroke-dasharray: 1000; stroke-dashoffset: 1000; 
-            animation: draw-vector 3s linear forwards; 
-            z-index: 5;
-        }
+        .threat-vector { position: absolute; stroke: var(--alert-red); stroke-width: 2; fill: none; stroke-dasharray: 1000; stroke-dashoffset: 1000; animation: draw-vector 3s linear forwards; z-index: 5; }
         @keyframes draw-vector { to { stroke-dashoffset: 0; } }
         
-        .intercept-pulse { 
-            position: absolute; 
-            width: 20px; height: 20px; 
-            background: var(--pasture-green); 
-            border-radius: 50%; 
-            transform: translate(-50%, -50%); 
-            animation: starburst 0.5s ease-out forwards; 
-            z-index: 11; 
-        }
+        .intercept-pulse { position: absolute; width: 20px; height: 20px; background: var(--pasture-green); border-radius: 50%; transform: translate(-50%, -50%); animation: starburst 0.5s ease-out forwards; z-index: 11; }
         @keyframes starburst { 0% { transform: translate(-50%, -50%) scale(0); opacity: 1; } 100% { transform: translate(-50%, -50%) scale(5); opacity: 0; } }
 
         .btn { background: var(--pasture-green); color: #000; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; text-transform: uppercase; font-size: 0.7rem; margin-top: 10px; }
@@ -226,22 +211,34 @@
         function updateDynamicStats() {
             FLOCKS += Math.floor(Math.random() * 3) - 1;
             WOOL += (Math.random() * 0.1);
-            document.getElementById('stat-flocks').innerText = FLOCKS.toLocaleString();
-            document.getElementById('stat-wool').innerText = WOOL.toFixed(1) + "t";
-            document.getElementById('stat-eff').innerText = (99 + Math.random()).toFixed(1) + "%";
-            document.getElementById('clover-val').innerText = (90 + Math.random() * 10).toFixed(1) + "%";
+            const flEl = document.getElementById('stat-flocks');
+            const wlEl = document.getElementById('stat-wool');
+            const efEl = document.getElementById('stat-eff');
+            const clEl = document.getElementById('clover-val');
+            if(flEl) flEl.innerText = FLOCKS.toLocaleString();
+            if(wlEl) wlEl.innerText = WOOL.toFixed(1) + "t";
+            if(efEl) efEl.innerText = (99 + Math.random()).toFixed(1) + "%";
+            if(clEl) clEl.innerText = (90 + Math.random() * 10).toFixed(1) + "%";
         }
 
         async function updateWeather() {
             try {
-                // Secondary Source logic from previous hardening
+                // Secondary Source logic (more robust)
                 const res = await fetch('https://api.open-meteo.com/v1/forecast?latitude=50.01&longitude=8.28&current_weather=true&temperature_unit=fahrenheit&windspeed_unit=mph');
                 const data = await res.json();
                 const current = data.current_weather;
                 document.getElementById('weather-cond').innerText = "Tactical Clear";
-                document.getElementById('weather-temp').innerText = current.temperature + "°F";
-                document.getElementById('weather-wind').innerText = current.windspeed + " mph";
+                document.getElementById('weather-temp').innerText = Math.round(current.temperature) + "°F";
+                document.getElementById('weather-wind').innerText = Math.round(current.windspeed) + " mph";
             } catch (e) { document.getElementById('weather-cond').innerText = "Safe"; }
+        }
+
+        function playRandomSheepSound() {
+            const soundCount = 7;
+            const randomIndex = Math.floor(Math.random() * soundCount) + 1;
+            const audio = new Audio(`sounds/sheep (${randomIndex}).mp3`);
+            audio.volume = 0.2;
+            audio.play().catch(e => console.log("Audio play blocked."));
         }
 
         function spawnSheep() {
@@ -254,6 +251,10 @@
             const duration = (CURRENT_MODE === "Virus") ? 5 : 15 + (Math.random() * 25);
             sheep.style.top = startY + 'vh';
             sheep.style.animation = `walkAcross ${duration}s linear forwards`;
+            
+            // CLICK HANDLER
+            sheep.onclick = () => playRandomSheepSound();
+            
             pasture.appendChild(sheep);
             setTimeout(() => sheep.remove(), duration * 1000);
         }
@@ -319,19 +320,15 @@
             const svg = document.getElementById('vector-layer');
             const battlespace = document.getElementById('battlespace');
             const rect = battlespace.getBoundingClientRect();
-            
-            for(let i=0; i < (Math.random() > 0.7 ? 2 : 1); i++) {
-                const startX = Math.random() * rect.width;
-                const startY = Math.random() * rect.height;
-                const endX = rect.width * 0.5; // Wiesbaden X
-                const endY = rect.height * 0.35; // Wiesbaden Y
-                
-                const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-                const d = `M ${startX} ${startY} Q ${(startX+endX)/2} ${Math.min(startY, endY)-50} ${endX} ${endY}`;
-                path.setAttribute("d", d); path.setAttribute("class", "threat-vector");
-                svg.appendChild(path);
-                setTimeout(() => { path.remove(); createIntercept(endX, endY); }, 3000);
-            }
+            const startX = Math.random() * rect.width;
+            const startY = Math.random() * rect.height;
+            const endX = rect.width * 0.5;
+            const endY = rect.height * 0.35;
+            const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            const d = `M ${startX} ${startY} Q ${(startX+endX)/2} ${Math.min(startY, endY)-50} ${endX} ${endY}`;
+            path.setAttribute("d", d); path.setAttribute("class", "threat-vector");
+            svg.appendChild(path);
+            setTimeout(() => { path.remove(); createIntercept(endX, endY); }, 3000);
         }
 
         function createIntercept(x, y) {
@@ -345,21 +342,12 @@
         }
 
         setInterval(spawnSheep, 2000);
-        function playRandomSheepSound() {
-            const soundCount = 7;
-            const randomIndex = Math.floor(Math.random() * soundCount) + 1;
-            const audio = new Audio(`sounds/sheep (${randomIndex}).mp3`);
-            audio.volume = 0.2; // Keep it subtle
-            audio.play().catch(e => console.log("Audio play blocked until user interaction."));
-        }
-
-        setInterval(spawnSheep, 2000);
         setInterval(spawnDog, 15000);
+        setInterval(spawnThreat, 3000);
         setInterval(spawnSensorPing, 800);
         setInterval(updateDynamicStats, 5000);
-        setInterval(playRandomSheepSound, 45000); // Play every 45 seconds
+        setInterval(playRandomSheepSound, 45000);
         setInterval(() => document.getElementById('clock').innerText = new Date().toLocaleTimeString(), 1000);
-
         setInterval(updateWeather, 600000);
         
         initTicker(); updateClock(); updateWeather(); runCycle();
