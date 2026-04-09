@@ -367,12 +367,29 @@
             setTimeout(() => sheep.remove(), duration * 1000);
         }
 
+        function spawnDog() {
+            const pasture = document.getElementById('pasture');
+            const dog = document.createElement('img');
+            dog.className = 'sheep-gif';
+            dog.src = 'https://media0.giphy.com/media/v1.Y2lkPTZjMDliOTUyNW9iN3BqN2huenp4aXkyMGs0dmxxN3J4dXp5OGk2cGFsbGo5ejVkdyZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/ccVvlqPxbEkhrpuPuY/giphy.gif';
+            
+            const startY = 20 + (Math.random() * 60);
+            const duration = 5 + (Math.random() * 10); // Dogs are faster than sheep
+            
+            dog.style.top = startY + 'vh';
+            dog.style.animation = `walkAcross ${duration}s linear forwards`;
+            
+            pasture.appendChild(dog);
+            setTimeout(() => dog.remove(), duration * 1000);
+        }
+
         function updateClock() {
             const now = new Date();
             document.getElementById('clock').innerText = now.toLocaleTimeString();
         }
 
         setInterval(spawnSheep, 2000);
+        setInterval(spawnDog, 15000); // Dog appears roughly every 15 seconds
         setInterval(updateClock, 1000);
         setInterval(updateWeather, 600000); // Update weather every 10 mins
         
