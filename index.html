@@ -65,8 +65,8 @@
         .card h3 { margin: 0 0 15px 0; color: var(--pasture-green); font-size: 0.9rem; text-transform: uppercase; }
         .stat { font-size: 2.5rem; font-weight: bold; }
 
-        .sheep-lane { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; }
-        .sheep-gif { position: absolute; width: 120px; height: auto; pointer-events: auto; cursor: pointer; }
+        .sheep-lane { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 100; /* IN FRONT OF MAP */ }
+        .sheep-gif { position: absolute; width: 120px; height: auto; pointer-events: auto; cursor: pointer; z-index: 101; }
         @keyframes walkAcross { from { left: -150px; } to { left: 110vw; } }
 
         /* Tactical Map Style */
