@@ -161,6 +161,20 @@
                 <div class="side-item">Mode <span class="side-value" id="mode-stat">Normal</span></div>
                 <button class="btn" onclick="forceToggle()">Mode Override</button>
             </div>
+
+            <div class="side-section">
+                <h4>Sheep Tunes</h4>
+                <div id="music-player">
+                    <div id="current-song" style="font-size: 0.7rem; margin-bottom: 5px; color: var(--accent-gold); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">No song playing</div>
+                    <select id="song-select" style="width: 100%; background: rgba(0,0,0,0.5); color: white; border: 1px solid var(--pasture-green); border-radius: 5px; padding: 5px; font-size: 0.7rem; outline: none;">
+                        <option value="">Select a tune...</option>
+                    </select>
+                    <div style="display: flex; gap: 5px; margin-top: 5px;">
+                        <button class="btn" style="flex: 1; margin-top: 0;" onclick="playMusic()">Play</button>
+                        <button class="btn" style="flex: 1; margin-top: 0;" onclick="stopMusic()">Stop</button>
+                    </div>
+                </div>
+            </div>
             
             <!-- MOVED UP AND PADDED -->
             <div style="margin-top: 40px; margin-bottom: 40px; padding: 20px; background: rgba(46, 204, 113, 0.1); border: 1px solid var(--pasture-green); border-radius: 10px; font-size: 0.85rem;">

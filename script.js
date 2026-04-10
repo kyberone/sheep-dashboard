@@ -1,11 +1,24 @@
 // Sheep-OS Tactical Engine v2.5.5
 console.log("ENGINE: Pre-ignition sequence started...");
 
+const GITHUB_MUSIC_BASE = "https://raw.githubusercontent.com/kyberone/sheep-tunes/main/";
+const SHEEP_TUNES = [
+    "Lambs of the Dark Field.wav",
+    "Midnight in the Meadow.wav",
+    "Counting Clouds.wav",
+    "Sheep Don’t Judge.wav",
+    "Stampede of Steel.wav",
+    "The Flock in the Dark.wav",
+    "We Rise in Wool.wav",
+    "We’re Not Just Sweaters.wav"
+];
+
 let CURRENT_MODE = "Normal";
 let NEXT_ALT = "Minecraft";
 let THREATS = 42891;
 let FLOCKS = 2568;
 let WOOL = 85.6;
+let currentAudio = null;
 
 const ASSETS = {
     SHEEP: 'https://mir-s3-cdn-cf.behance.net/project_modules/hd/e7d81771805451.5ca68e4ac7166.gif',
@@ -210,6 +223,7 @@ function bootEngine() {
     try {
         initTicker();
         updateWeather();
+        initMusicPlayer();
         // Delay initial wisdom to ensure script load
         setTimeout(updateWisdom, 1000);
         startTacticalCycle();
@@ -227,6 +241,43 @@ function bootEngine() {
         setInterval(updateWeather, 600000);
         console.log("ENGINE: All systems nominal.");
     } catch (err) { console.error("ENGINE: BOOT ERROR.", err); }
+}
+
+function initMusicPlayer() {
+    const select = document.getElementById('song-select');
+    if (!select) return;
+    SHEEP_TUNES.forEach(song => {
+        const option = document.createElement('option');
+        option.value = song;
+        option.textContent = song.replace('.wav', '');
+        select.appendChild(option);
+    });
+}
+
+function playMusic() {
+    const select = document.getElementById('song-select');
+    const song = select.value;
+    if (!song) return;
+
+    if (currentAudio) {
+        currentAudio.pause();
+    }
+
+    const url = GITHUB_MUSIC_BASE + encodeURIComponent(song);
+    currentAudio = new Audio(url);
+    currentAudio.play().catch(e => console.error("Playback failed", e));
+    
+    const status = document.getElementById('current-song');
+    if (status) status.innerText = "Playing: " + song.replace('.wav', '');
+}
+
+function stopMusic() {
+    if (currentAudio) {
+        currentAudio.pause();
+        currentAudio = null;
+    }
+    const status = document.getElementById('current-song');
+    if (status) status.innerText = "No song playing";
 }
 
 bootEngine();
